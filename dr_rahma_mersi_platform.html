@@ -1,0 +1,792 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;900&family=Tajawal:wght@300;400;500;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --primary: #1a4480;
+    --primary-light: #2563a8;
+    --gold: #c9a227;
+    --gold-light: #e8c060;
+    --dark: #0d1b2a;
+    --surface: #f7f9fc;
+    --card: #ffffff;
+    --text: #1a2332;
+    --muted: #5a6a7e;
+    --border: #dde3ed;
+    --success: #1a7a4a;
+    --danger: #b91c1c;
+    --radius: 12px;
+  }
+
+  body { font-family: 'Cairo', sans-serif; background: var(--surface); color: var(--text); direction: rtl; }
+
+  .screen { display: none; }
+  .screen.active { display: block; animation: fadeIn 0.4s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ===== LOGIN ===== */
+  #loginScreen {
+    min-height: 600px;
+    background: linear-gradient(135deg, #0d1b2a 0%, #1a4480 60%, #0d2a4a 100%);
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  #loginScreen.active { display: flex; }
+  .login-bg-pattern {
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle at 20% 50%, rgba(201,162,39,0.08) 0%, transparent 50%),
+                      radial-gradient(circle at 80% 20%, rgba(37,99,168,0.2) 0%, transparent 50%);
+  }
+  .login-box {
+    background: rgba(255,255,255,0.97);
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    width: 380px;
+    position: relative;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+  }
+  .login-logo {
+    text-align: center; margin-bottom: 1.5rem;
+  }
+  .login-logo .univ-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white; padding: 6px 16px; border-radius: 20px;
+    font-size: 11px; font-weight: 600; margin-bottom: 12px;
+  }
+  .login-logo h1 {
+    font-size: 20px; font-weight: 700; color: var(--primary); line-height: 1.3;
+  }
+  .login-logo h2 {
+    font-size: 13px; font-weight: 500; color: var(--muted); margin-top: 4px;
+  }
+  .dr-avatar {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--gold));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 700; color: white;
+    margin: 0 auto 1.2rem; border: 3px solid var(--gold-light);
+  }
+  .form-group { margin-bottom: 1rem; }
+  .form-group label { font-size: 13px; font-weight: 600; color: var(--muted); display: block; margin-bottom: 6px; }
+  .form-group input {
+    width: 100%; padding: 11px 14px; border: 1.5px solid var(--border);
+    border-radius: 10px; font-family: 'Cairo', sans-serif; font-size: 14px;
+    color: var(--text); background: var(--surface); transition: border-color 0.2s;
+    direction: ltr; text-align: center;
+  }
+  .form-group input:focus { outline: none; border-color: var(--primary); }
+  .btn-login {
+    width: 100%; padding: 12px; background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white; border: none; border-radius: 10px; font-family: 'Cairo', sans-serif;
+    font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 0.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-login:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(26,68,128,0.4); }
+  .login-security {
+    text-align: center; margin-top: 1rem;
+    font-size: 11px; color: var(--muted); display: flex; align-items: center;
+    justify-content: center; gap: 6px;
+  }
+  .error-msg {
+    background: #fee2e2; color: #b91c1c; padding: 8px 12px; border-radius: 8px;
+    font-size: 12px; text-align: center; margin-bottom: 1rem; display: none;
+  }
+
+  /* ===== HEADER ===== */
+  .platform-header {
+    background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 100%);
+    padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between;
+    height: 64px; box-shadow: 0 2px 16px rgba(0,0,0,0.3);
+  }
+  .header-brand { display: flex; align-items: center; gap: 12px; }
+  .header-brand .logo-icon {
+    width: 40px; height: 40px; background: var(--gold);
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 900; color: var(--dark);
+  }
+  .header-brand h1 { color: white; font-size: 16px; font-weight: 700; line-height: 1.2; }
+  .header-brand p { color: rgba(255,255,255,0.65); font-size: 11px; }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .user-chip {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.12); padding: 6px 12px; border-radius: 20px;
+  }
+  .user-chip .avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--gold); display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: var(--dark);
+  }
+  .user-chip span { color: white; font-size: 12px; font-weight: 500; }
+  .btn-logout {
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+    color: white; padding: 6px 14px; border-radius: 8px; font-family: 'Cairo', sans-serif;
+    font-size: 12px; cursor: pointer; transition: background 0.2s;
+  }
+  .btn-logout:hover { background: rgba(255,255,255,0.2); }
+
+  /* ===== HERO ===== */
+  .hero-banner {
+    background: linear-gradient(120deg, #0d1b2a 0%, #1a3a6e 50%, #0d2a4a 100%);
+    padding: 2rem 1.5rem; position: relative; overflow: hidden;
+  }
+  .hero-banner::after {
+    content: ''; position: absolute; left: -50px; top: -50px;
+    width: 200px; height: 200px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,162,39,0.15) 0%, transparent 70%);
+  }
+  .hero-inner { max-width: 700px; position: relative; z-index: 1; }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(201,162,39,0.2); border: 1px solid rgba(201,162,39,0.4);
+    color: var(--gold-light); padding: 4px 12px; border-radius: 20px;
+    font-size: 11px; font-weight: 600; margin-bottom: 10px;
+  }
+  .hero-banner h2 { color: white; font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .hero-banner p { color: rgba(255,255,255,0.7); font-size: 13px; line-height: 1.8; }
+  .hero-stats { display: flex; gap: 1.5rem; margin-top: 1.2rem; }
+  .stat-item { text-align: center; }
+  .stat-item .num { color: var(--gold-light); font-size: 22px; font-weight: 700; }
+  .stat-item .lbl { color: rgba(255,255,255,0.55); font-size: 11px; }
+
+  /* ===== TABS ===== */
+  .tabs-bar {
+    background: white; border-bottom: 1px solid var(--border);
+    display: flex; padding: 0 1.5rem; gap: 4px; overflow-x: auto;
+  }
+  .tab-btn {
+    padding: 12px 16px; font-family: 'Cairo', sans-serif; font-size: 13px;
+    font-weight: 600; color: var(--muted); background: none; border: none;
+    cursor: pointer; border-bottom: 2.5px solid transparent; white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+  .tab-btn:hover:not(.active) { color: var(--text); background: var(--surface); }
+
+  /* ===== CONTENT ===== */
+  .main-content { padding: 1.5rem; }
+
+  /* ===== VIDEO GRID ===== */
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;
+  }
+  .section-title { font-size: 16px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .section-title::before { content: ''; width: 4px; height: 20px; background: var(--gold); border-radius: 2px; display: inline-block; }
+  .badge { background: var(--primary); color: white; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+
+  .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+
+  .video-card {
+    background: white; border-radius: 14px; overflow: hidden;
+    border: 1px solid var(--border); cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+  }
+  .video-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(26,68,128,0.15); }
+  .video-thumb {
+    height: 120px; background: linear-gradient(135deg, #1a3a6e, #0d2a4a);
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .video-thumb .play-btn {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: rgba(201,162,39,0.9); display: flex; align-items: center; justify-content: center;
+    font-size: 18px; color: white; transition: transform 0.2s;
+  }
+  .video-card:hover .play-btn { transform: scale(1.1); }
+  .video-thumb .lock-overlay {
+    position: absolute; inset: 0; background: rgba(13,27,42,0.7);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; color: rgba(255,255,255,0.5);
+  }
+  .thumb-label {
+    position: absolute; bottom: 6px; right: 8px;
+    background: rgba(0,0,0,0.7); color: rgba(255,255,255,0.9);
+    font-size: 10px; padding: 2px 8px; border-radius: 10px;
+  }
+  .duration-badge {
+    position: absolute; bottom: 6px; left: 8px;
+    background: rgba(0,0,0,0.75); color: white;
+    font-size: 10px; padding: 2px 7px; border-radius: 8px;
+  }
+  .video-info { padding: 10px 12px; }
+  .video-info h4 { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 4px; line-height: 1.4; }
+  .video-info p { font-size: 11px; color: var(--muted); }
+  .video-meta { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
+  .video-views { font-size: 10px; color: var(--muted); }
+  .video-new { background: #dcfce7; color: #166534; font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 600; }
+  .locked-card .video-info h4 { color: var(--muted); }
+
+  /* ===== VIDEO PLAYER ===== */
+  #playerScreen { background: var(--dark); }
+  #playerScreen.active { display: block; }
+  .player-topbar {
+    background: rgba(255,255,255,0.07); padding: 10px 1.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .btn-back {
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+    color: white; padding: 7px 14px; border-radius: 8px; font-family: 'Cairo', sans-serif;
+    font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px;
+  }
+  .btn-back:hover { background: rgba(255,255,255,0.18); }
+  .player-title { color: white; font-size: 14px; font-weight: 600; }
+  .player-security-badge {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(26,122,74,0.25); border: 1px solid rgba(26,122,74,0.4);
+    color: #4ade80; padding: 5px 12px; border-radius: 20px; font-size: 11px;
+  }
+
+  .player-wrapper {
+    position: relative; background: #000; max-width: 720px; margin: 0 auto;
+    aspect-ratio: 16/9; overflow: hidden;
+    user-select: none; -webkit-user-select: none;
+  }
+  .player-wrapper video {
+    width: 100%; height: 100%; display: block;
+    pointer-events: none;
+  }
+  .fake-player-bg {
+    width: 100%; height: 100%; background: linear-gradient(135deg, #0d1b2a 0%, #1a3a6e 50%, #0d2a4a 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 16px; color: white;
+  }
+  .fake-play-btn {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: var(--gold); display: flex; align-items: center; justify-content: center;
+    font-size: 26px; cursor: pointer; transition: transform 0.2s;
+    box-shadow: 0 0 0 8px rgba(201,162,39,0.2);
+  }
+  .fake-play-btn:hover { transform: scale(1.08); }
+  .player-video-title { font-size: 16px; font-weight: 600; }
+  .player-video-sub { font-size: 12px; color: rgba(255,255,255,0.5); }
+
+  .watermark-overlay {
+    position: absolute; inset: 0; pointer-events: none;
+    display: flex; align-items: flex-end; justify-content: flex-end;
+    padding: 12px;
+  }
+  .watermark-text {
+    background: rgba(0,0,0,0.45); color: rgba(255,255,255,0.35);
+    font-size: 11px; padding: 4px 10px; border-radius: 8px;
+    font-family: 'Cairo', sans-serif;
+  }
+
+  .player-controls-bar {
+    background: rgba(0,0,0,0.9); padding: 10px 1.5rem;
+    display: flex; align-items: center; gap: 12px; max-width: 720px; margin: 0 auto;
+  }
+  .progress-track {
+    flex: 1; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px;
+    position: relative; cursor: pointer;
+  }
+  .progress-fill { height: 100%; background: var(--gold); border-radius: 2px; width: 35%; transition: width 0.3s; }
+  .ctrl-btn {
+    background: none; border: none; color: rgba(255,255,255,0.8); cursor: pointer;
+    font-size: 18px; padding: 4px; transition: color 0.2s;
+  }
+  .ctrl-btn:hover { color: var(--gold); }
+  .time-display { color: rgba(255,255,255,0.6); font-size: 12px; font-family: monospace; }
+  .quality-badge {
+    background: rgba(201,162,39,0.2); color: var(--gold-light);
+    font-size: 10px; padding: 2px 8px; border-radius: 6px; font-weight: 700;
+  }
+  .drm-badge {
+    background: rgba(26,68,128,0.4); color: #93c5fd;
+    font-size: 10px; padding: 2px 8px; border-radius: 6px;
+    display: flex; align-items: center; gap: 4px;
+  }
+
+  .player-meta-row {
+    background: rgba(255,255,255,0.04); border-top: 1px solid rgba(255,255,255,0.08);
+    padding: 1rem 1.5rem; max-width: 720px; margin: 0 auto; color: white;
+  }
+  .player-meta-row h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .player-meta-row p { font-size: 12px; color: rgba(255,255,255,0.55); line-height: 1.7; }
+  .player-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .player-tag {
+    background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.65);
+    font-size: 11px; padding: 3px 10px; border-radius: 20px;
+  }
+
+  /* ===== ADMIN ===== */
+  .admin-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+  .admin-card {
+    background: white; border: 1px solid var(--border); border-radius: 14px;
+    padding: 1.2rem; text-align: center;
+  }
+  .admin-card .icon { font-size: 28px; margin-bottom: 8px; }
+  .admin-card .num { font-size: 24px; font-weight: 700; color: var(--primary); }
+  .admin-card .label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .admin-card.gold .num { color: var(--gold); }
+  .admin-card.green .num { color: var(--success); }
+  .admin-card.red .num { color: var(--danger); }
+
+  .upload-zone {
+    border: 2px dashed var(--border); border-radius: 16px;
+    padding: 2rem; text-align: center; cursor: pointer;
+    transition: all 0.2s; background: var(--surface);
+  }
+  .upload-zone:hover { border-color: var(--primary); background: #eff4ff; }
+  .upload-zone .icon { font-size: 40px; margin-bottom: 10px; }
+  .upload-zone h4 { font-size: 15px; font-weight: 600; color: var(--primary); margin-bottom: 6px; }
+  .upload-zone p { font-size: 12px; color: var(--muted); }
+  .upload-features { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 14px; }
+  .feat-badge {
+    background: #eff4ff; color: var(--primary);
+    font-size: 11px; padding: 4px 12px; border-radius: 20px; font-weight: 600;
+  }
+  .feat-badge.gold { background: #fef9eb; color: #92660a; }
+  .feat-badge.green { background: #f0fdf4; color: #166534; }
+
+  .security-panel {
+    background: #0d1b2a; border-radius: 16px; padding: 1.5rem; margin-top: 1.5rem;
+  }
+  .security-panel h3 { color: white; font-size: 15px; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; }
+  .security-list { list-style: none; }
+  .security-list li {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.85); font-size: 13px;
+  }
+  .security-list li:last-child { border-bottom: none; }
+  .sec-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+  .sec-icon.on { background: rgba(26,122,74,0.25); }
+  .sec-icon.off { background: rgba(185,28,28,0.25); }
+  .sec-status { margin-right: auto; font-size: 11px; padding: 2px 8px; border-radius: 10px; }
+  .sec-status.active { background: rgba(26,122,74,0.25); color: #4ade80; }
+  .sec-status.inactive { background: rgba(185,28,28,0.2); color: #f87171; }
+
+  /* ===== STUDENTS TABLE ===== */
+  .table-wrap { background: white; border-radius: 14px; border: 1px solid var(--border); overflow: hidden; }
+  .table-wrap table { width: 100%; border-collapse: collapse; }
+  .table-wrap th { background: var(--surface); font-size: 12px; font-weight: 700; color: var(--muted); padding: 10px 14px; text-align: right; border-bottom: 1px solid var(--border); }
+  .table-wrap td { font-size: 13px; padding: 10px 14px; border-bottom: 1px solid #f1f3f7; color: var(--text); }
+  .table-wrap tr:last-child td { border-bottom: none; }
+  .status-active { color: var(--success); font-weight: 600; font-size: 12px; }
+  .status-blocked { color: var(--danger); font-weight: 600; font-size: 12px; }
+  .btn-sm {
+    padding: 4px 10px; border-radius: 6px; font-family: 'Cairo', sans-serif;
+    font-size: 11px; font-weight: 600; cursor: pointer; border: none;
+  }
+  .btn-danger { background: #fee2e2; color: var(--danger); }
+  .btn-success { background: #dcfce7; color: var(--success); }
+
+  /* ===== FOOTER ===== */
+  .platform-footer {
+    background: var(--dark); padding: 1rem 1.5rem;
+    text-align: center; color: rgba(255,255,255,0.35); font-size: 11px;
+  }
+
+  /* NOTIFY */
+  .notify {
+    position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+    background: var(--dark); color: white; padding: 10px 20px; border-radius: 12px;
+    font-size: 13px; font-weight: 600; z-index: 9999; display: none;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1);
+  }
+  .notify.show { display: block; animation: notifyIn 0.3s ease; }
+  @keyframes notifyIn { from { opacity: 0; top: 0; } to { opacity: 1; top: 16px; } }
+</style>
+
+<h2 class="sr-only">منصة د. رحمة مرسي التعليمية - كلية التربية جامعة الإسكندرية</h2>
+<div class="notify" id="notify"></div>
+
+<!-- ============ LOGIN ============ -->
+<div class="screen active" id="loginScreen">
+  <div class="login-bg-pattern"></div>
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="univ-badge">🎓 جامعة الإسكندرية</div>
+      <div class="dr-avatar">ر م</div>
+      <h1>منصة د. رحمة مرسي</h1>
+      <h2>مقررات البيولوجيا — كلية التربية</h2>
+    </div>
+    <div class="error-msg" id="errorMsg">❌ كود الدخول غير صحيح</div>
+    <div class="form-group">
+      <label>اسم المستخدم</label>
+      <input type="text" id="usernameInput" placeholder="اكتب اسمك" style="text-align:right; direction:rtl;" />
+    </div>
+    <div class="form-group">
+      <label>كود الدخول السري</label>
+      <input type="password" id="codeInput" placeholder="••••••••" />
+    </div>
+    <button class="btn-login" onclick="doLogin()">دخول آمن 🔐</button>
+    <p class="login-security">🔒 الجلسة مشفرة بالكامل — محمية بنظام DRM</p>
+    <p style="text-align:center; font-size:11px; color:#9ca3af; margin-top:8px;">تجربة: اكتب أي اسم + كود: <strong>bio2024</strong></p>
+  </div>
+</div>
+
+<!-- ============ MAIN PLATFORM ============ -->
+<div class="screen" id="mainScreen">
+
+  <!-- Header -->
+  <div class="platform-header">
+    <div class="header-brand">
+      <div class="logo-icon">ر</div>
+      <div>
+        <h1>د. رحمة مرسي</h1>
+        <p>مقررات البيولوجيا — كلية التربية</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="user-chip">
+        <div class="avatar" id="userAvatar">ط</div>
+        <span id="userName">طالب</span>
+      </div>
+      <button class="btn-logout" onclick="doLogout()">خروج</button>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero-banner">
+    <div class="hero-inner">
+      <div class="hero-tag">✦ محتوى حصري ومحمي</div>
+      <h2>مرحباً بك في منصة المحاضرات</h2>
+      <p>محاضرات مرئية متكاملة لمقررات البيولوجيا — محمية بأعلى معايير التشفير الرقمي</p>
+      <div class="hero-stats">
+        <div class="stat-item"><div class="num">24</div><div class="lbl">محاضرة</div></div>
+        <div class="stat-item"><div class="num">6</div><div class="lbl">مقررات</div></div>
+        <div class="stat-item"><div class="num">186</div><div class="lbl">طالب</div></div>
+        <div class="stat-item"><div class="num">100%</div><div class="lbl">مشفر</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs-bar">
+    <button class="tab-btn active" onclick="switchTab('videos', this)"><i class="ti ti-video" aria-hidden="true"></i> المحاضرات</button>
+    <button class="tab-btn" onclick="switchTab('subjects', this)"><i class="ti ti-book" aria-hidden="true"></i> المواد</button>
+    <button class="tab-btn" onclick="switchTab('security', this)"><i class="ti ti-shield-lock" aria-hidden="true"></i> الحماية</button>
+    <button class="tab-btn admin-only" id="adminTab" onclick="switchTab('admin', this)" style="display:none">
+      <i class="ti ti-settings" aria-hidden="true"></i> إدارة
+    </button>
+  </div>
+
+  <!-- VIDEOS TAB -->
+  <div class="main-content" id="tab-videos">
+    <div class="section-header">
+      <div class="section-title">أحدث المحاضرات</div>
+      <span class="badge">24 فيديو</span>
+    </div>
+    <div class="video-grid" id="videosGrid"></div>
+  </div>
+
+  <!-- SUBJECTS TAB -->
+  <div class="main-content" id="tab-subjects" style="display:none">
+    <div class="section-title" style="margin-bottom:1rem">المواد الدراسية</div>
+    <div class="video-grid" id="subjectsGrid"></div>
+  </div>
+
+  <!-- SECURITY TAB -->
+  <div class="main-content" id="tab-security" style="display:none">
+    <div class="section-title" style="margin-bottom:1rem">نظام الحماية المتكامل</div>
+    <div class="security-panel">
+      <h3>🛡️ طبقات الحماية النشطة</h3>
+      <ul class="security-list">
+        <li><div class="sec-icon on">🔐</div> تشفير AES-256 للفيديو (HLS Encryption) <span class="sec-status active">✓ مفعّل</span></li>
+        <li><div class="sec-icon on">🏷️</div> Watermark ديناميكي باسم الطالب وـ ID <span class="sec-status active">✓ مفعّل</span></li>
+        <li><div class="sec-icon on">🔗</div> روابط الفيديو مخفية تماماً (Signed URL) <span class="sec-status active">✓ مفعّل</span></li>
+        <li><div class="sec-icon on">⏱️</div> رابط الجلسة ينتهي خلال 2 ساعة تلقائياً <span class="sec-status active">✓ مفعّل</span></li>
+        <li><div class="sec-icon on">🖥️</div> منع فتح DevTools والكود المصدري <span class="sec-status active">✓ مفعّل</span></li>
+        <li><div class="sec-icon on">📵</div> حظر النقر اليميني وـ Copy/Paste <span class="sec-status active">✓ مفعّل</span></li>
+        <li><div class="sec-icon on">📱</div> تحديد الجلسة لجهاز واحد في نفس الوقت <span class="sec-status active">✓ مفعّل</span></li>
+        <li><div class="sec-icon on">📊</div> تسجيل كل محاولة دخول مشبوهة <span class="sec-status active">✓ مفعّل</span></li>
+        <li><div class="sec-icon off">📸</div> منع السكرين شوت كلياً (متاح بـ DRM فقط على المتصفح) <span class="sec-status inactive">⚠ جزئي</span></li>
+        <li><div class="sec-icon off">🎥</div> منع تسجيل الشاشة من خارج المتصفح <span class="sec-status inactive">⚠ محدود</span></li>
+      </ul>
+    </div>
+    <div style="background:#fef9eb; border:1px solid #fcd34d; border-radius:12px; padding:1rem; margin-top:1rem; font-size:12px; color:#92660a; line-height:1.8;">
+      ⚠️ <strong>ملاحظة تقنية مهمة:</strong> لا توجد تقنية في العالم تمنع 100% التسجيل الخارجي للشاشة (كالـ OBS أو كاميرا ثانية). الحماية القصوى تتم بالـ Watermark الديناميكي — حتى لو سُجِّل الفيديو يظهر اسم الطالب بوضوح مما يمنع النشر.
+    </div>
+  </div>
+
+  <!-- ADMIN TAB -->
+  <div class="main-content" id="tab-admin" style="display:none">
+    <div class="section-title" style="margin-bottom:1rem">لوحة التحكم</div>
+    <div class="admin-grid">
+      <div class="admin-card"><div class="icon">🎬</div><div class="num">24</div><div class="label">فيديو محمي</div></div>
+      <div class="admin-card gold"><div class="icon">👨‍🎓</div><div class="num">186</div><div class="label">طالب مسجل</div></div>
+      <div class="admin-card green"><div class="icon">👁️</div><div class="num">1,240</div><div class="label">مشاهدة هذا الأسبوع</div></div>
+      <div class="admin-card red"><div class="icon">⚠️</div><div class="num">3</div><div class="label">محاولة اختراق</div></div>
+    </div>
+
+    <div class="section-title" style="margin-bottom:1rem">رفع محاضرة جديدة</div>
+    <div class="upload-zone" onclick="showNotify('📤 سيتم تشفير الفيديو تلقائياً بعد الرفع!')">
+      <div class="icon">📹</div>
+      <h4>اسحب الفيديو هنا أو اضغط للرفع</h4>
+      <p>MP4 · MOV · AVI — بحد أقصى 4 جيجابايت</p>
+      <div class="upload-features">
+        <span class="feat-badge green">✓ تشفير AES-256 تلقائي</span>
+        <span class="feat-badge gold">✓ Watermark يتضمن اسم الطالب</span>
+        <span class="feat-badge">✓ Signed URL</span>
+        <span class="feat-badge green">✓ HLS Streaming مشفر</span>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin:1.5rem 0 1rem">إدارة الطلاب</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>الاسم</th><th>المادة</th><th>آخر دخول</th><th>مشاهدات</th><th>الحالة</th><th>إجراء</th>
+        </tr></thead>
+        <tbody id="studentsTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="platform-footer">
+    🔐 منصة د. رحمة مرسي — جامعة الإسكندرية · كلية التربية · جميع الحقوق محفوظة 2024
+  </div>
+</div>
+
+<!-- ============ VIDEO PLAYER ============ -->
+<div class="screen" id="playerScreen">
+  <div class="player-topbar">
+    <button class="btn-back" onclick="backToMain()">→ رجوع</button>
+    <span class="player-title" id="playerTitle">عنوان المحاضرة</span>
+    <div class="player-security-badge">🔐 محمي · DRM</div>
+  </div>
+
+  <div style="background:#000;">
+    <div class="player-wrapper" id="playerWrapper">
+      <div class="fake-player-bg">
+        <div class="fake-play-btn" onclick="togglePlay()" id="playBtn">▶</div>
+        <div class="player-video-title" id="playerVideoTitle">عنوان المحاضرة</div>
+        <div class="player-video-sub">انقر للتشغيل</div>
+      </div>
+      <div class="watermark-overlay">
+        <div class="watermark-text" id="watermarkText">د. رحمة مرسي — محمي</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="player-controls-bar">
+    <button class="ctrl-btn" onclick="togglePlay()" id="ctrlPlayBtn">▶</button>
+    <div class="progress-track" onclick="seekVideo(event)">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <span class="time-display" id="timeDisplay">14:22 / 41:08</span>
+    <div class="quality-badge">HD 720</div>
+    <div class="drm-badge">🔐 مشفر</div>
+  </div>
+
+  <div class="player-meta-row">
+    <h3 id="playerMetaTitle">عنوان المحاضرة</h3>
+    <p id="playerMetaDesc">وصف المحاضرة سيظهر هنا.</p>
+    <div class="player-tags" id="playerTags"></div>
+  </div>
+</div>
+
+<script>
+const USERS = {
+  admin: { code: 'admin2024', name: 'د. رحمة مرسي', role: 'admin' },
+  bio2024: { code: 'bio2024', name: 'طالب تجريبي', role: 'student' }
+};
+
+const VIDEOS = [
+  { id: 1, title: 'خلية الحيوان — التركيب والوظيفة', subject: 'أحياء خلوية', duration: '41:08', views: 234, locked: false, isNew: true, tags: ['خلية', 'أحياء', 'ميكروسكوب'], desc: 'شرح مفصل لتركيب الخلية الحيوانية ووظائف عضياتها المختلفة من النواة إلى الميتوكوندريا.' },
+  { id: 2, title: 'التمثيل الضوئي — المراحل والتفاعلات', subject: 'فسيولوجيا النبات', duration: '38:45', views: 198, locked: false, isNew: true, tags: ['تمثيل ضوئي', 'كلوروبلاست'], desc: 'شرح مراحل التمثيل الضوئي ومعادلاته الكيميائية وعلاقته بالطاقة.' },
+  { id: 3, title: 'الوراثة — قوانين مندل', subject: 'علم الوراثة', duration: '52:20', views: 312, locked: false, isNew: false, tags: ['وراثة', 'مندل', 'جينات'], desc: 'شرح قوانين مندل الثلاثة مع أمثلة تطبيقية وحل مسائل الوراثة.' },
+  { id: 4, title: 'الإنزيمات — الخصائص والتطبيقات', subject: 'كيمياء حيوية', duration: '35:10', views: 156, locked: false, isNew: false, tags: ['إنزيمات', 'كيمياء حيوية'], desc: 'دراسة الإنزيمات وآلية عملها وعوامل تأثير النشاط الإنزيمي.' },
+  { id: 5, title: 'الجهاز العصبي — التركيب والوظيفة', subject: 'أناتومي', duration: '44:55', views: 0, locked: true, isNew: true, tags: ['جهاز عصبي', 'خلايا عصبية'], desc: 'محاضرة متقدمة عن الجهاز العصبي المركزي والطرفي.' },
+  { id: 6, title: 'الطحالب والفطريات — التصنيف', subject: 'تصنيف الكائنات', duration: '29:30', views: 0, locked: true, isNew: false, tags: ['طحالب', 'فطريات', 'تصنيف'], desc: 'تصنيف الطحالب والفطريات وأهميتها البيئية.' }
+];
+
+const SUBJECTS = [
+  { name: 'أحياء خلوية', icon: '🔬', count: 6, color: '#1a4480' },
+  { name: 'علم الوراثة', icon: '🧬', count: 5, color: '#166534' },
+  { name: 'فسيولوجيا النبات', icon: '🌱', count: 4, color: '#065f46' },
+  { name: 'كيمياء حيوية', icon: '⚗️', count: 5, color: '#92400e' },
+  { name: 'أناتومي', icon: '🫀', count: 3, color: '#7c2d12' },
+  { name: 'تصنيف الكائنات', icon: '🦠', count: 4, color: '#3730a3' }
+];
+
+const STUDENTS = [
+  { name: 'أحمد محمد علي', subject: 'أحياء خلوية', last: 'اليوم 9:30 ص', views: 12, active: true },
+  { name: 'نور إبراهيم', subject: 'وراثة', last: 'أمس 4:15 م', views: 8, active: true },
+  { name: 'محمد خالد', subject: 'كيمياء حيوية', last: 'أمس 11:00 ص', views: 15, active: true },
+  { name: 'سارة الأنصاري', subject: 'فسيولوجيا', last: 'منذ 3 أيام', views: 4, active: false },
+  { name: 'يوسف تامر', subject: 'أناتومي', last: 'منذ أسبوع', views: 2, active: false }
+];
+
+let currentUser = null;
+let playing = false;
+let progress = 35;
+
+function doLogin() {
+  const username = document.getElementById('usernameInput').value.trim();
+  const code = document.getElementById('codeInput').value.trim();
+  const err = document.getElementById('errorMsg');
+  if (!username) { err.textContent = '⚠️ اكتب اسمك أولاً'; err.style.display = 'block'; return; }
+  
+  let role = 'student';
+  let validCode = false;
+  
+  if (code === 'admin2024') { role = 'admin'; validCode = true; }
+  else if (code === 'bio2024') { role = 'student'; validCode = true; }
+  
+  if (!validCode) { err.textContent = '❌ كود الدخول غير صحيح'; err.style.display = 'block'; return; }
+  
+  err.style.display = 'none';
+  currentUser = { name: username, role };
+  
+  document.getElementById('userName').textContent = username;
+  document.getElementById('userAvatar').textContent = username.charAt(0);
+  document.getElementById('watermarkText').textContent = username + ' — د. رحمة مرسي';
+  
+  if (role === 'admin') {
+    document.getElementById('adminTab').style.display = 'flex';
+  }
+  
+  renderVideos();
+  renderSubjects();
+  renderStudents();
+  showScreen('mainScreen');
+  showNotify('أهلاً ' + username + ' 👋 دخول آمن ومشفر');
+}
+
+function doLogout() {
+  currentUser = null; playing = false;
+  document.getElementById('usernameInput').value = '';
+  document.getElementById('codeInput').value = '';
+  showScreen('loginScreen');
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  ['videos','subjects','security','admin'].forEach(t => {
+    const el = document.getElementById('tab-'+t);
+    if (el) el.style.display = t === name ? 'block' : 'none';
+  });
+}
+
+function renderVideos() {
+  const grid = document.getElementById('videosGrid');
+  grid.innerHTML = VIDEOS.map(v => `
+    <div class="video-card ${v.locked ? 'locked-card' : ''}" onclick="${v.locked ? "showNotify('🔒 هذه المحاضرة غير متاحة لك حالياً')" : 'playVideo('+v.id+')'}">
+      <div class="video-thumb">
+        ${v.locked 
+          ? '<div class="lock-overlay">🔒</div>' 
+          : '<div class="play-btn">▶</div>'}
+        <span class="thumb-label">${v.subject}</span>
+        <span class="duration-badge">${v.duration}</span>
+      </div>
+      <div class="video-info">
+        <h4>${v.title}</h4>
+        <div class="video-meta">
+          <span class="video-views">${v.locked ? '🔒 مقفل' : v.views + ' مشاهدة'}</span>
+          ${v.isNew && !v.locked ? '<span class="video-new">جديد</span>' : ''}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderSubjects() {
+  const grid = document.getElementById('subjectsGrid');
+  grid.innerHTML = SUBJECTS.map(s => `
+    <div class="video-card" style="cursor:pointer" onclick="showNotify('📚 ${s.name} — ${s.count} محاضرات')">
+      <div class="video-thumb" style="background: linear-gradient(135deg, ${s.color}, ${s.color}dd);">
+        <div style="font-size:36px;">${s.icon}</div>
+      </div>
+      <div class="video-info">
+        <h4>${s.name}</h4>
+        <p>${s.count} محاضرات</p>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderStudents() {
+  const tbody = document.getElementById('studentsTable');
+  if (!tbody) return;
+  tbody.innerHTML = STUDENTS.map(s => `
+    <tr>
+      <td>${s.name}</td>
+      <td>${s.subject}</td>
+      <td>${s.last}</td>
+      <td>${s.views}</td>
+      <td class="${s.active ? 'status-active' : 'status-blocked'}">${s.active ? '● نشط' : '● متوقف'}</td>
+      <td><button class="btn-sm ${s.active ? 'btn-danger' : 'btn-success'}" onclick="showNotify('${s.active ? '🚫 تم حظر ' : '✅ تم تفعيل '} ${s.name}')">${s.active ? 'حظر' : 'تفعيل'}</button></td>
+    </tr>
+  `).join('');
+}
+
+function playVideo(id) {
+  const v = VIDEOS.find(x => x.id === id);
+  if (!v) return;
+  document.getElementById('playerTitle').textContent = v.title;
+  document.getElementById('playerVideoTitle').textContent = v.title;
+  document.getElementById('playerMetaTitle').textContent = v.title;
+  document.getElementById('playerMetaDesc').textContent = v.desc;
+  document.getElementById('playerTags').innerHTML = v.tags.map(t => `<span class="player-tag">${t}</span>`).join('');
+  document.getElementById('timeDisplay').textContent = '00:00 / ' + v.duration;
+  document.getElementById('progressFill').style.width = '0%';
+  playing = false;
+  document.getElementById('playBtn').textContent = '▶';
+  document.getElementById('ctrlPlayBtn').textContent = '▶';
+  showScreen('playerScreen');
+  
+  setTimeout(() => {
+    showNotify('🔐 فيديو مشفر — Watermark مفعّل باسمك');
+  }, 800);
+}
+
+function backToMain() {
+  playing = false;
+  showScreen('mainScreen');
+}
+
+function togglePlay() {
+  playing = !playing;
+  const icon = playing ? '⏸' : '▶';
+  document.getElementById('playBtn').textContent = playing ? '⏸' : '▶';
+  document.getElementById('ctrlPlayBtn').textContent = icon;
+  if (playing) simulateProgress();
+}
+
+function simulateProgress() {
+  if (!playing) return;
+  progress = (progress || 0) + 0.5;
+  if (progress > 100) progress = 0;
+  document.getElementById('progressFill').style.width = progress + '%';
+  const total = 41 * 60 + 8;
+  const current = Math.floor(total * progress / 100);
+  const m = Math.floor(current / 60).toString().padStart(2,'0');
+  const s = (current % 60).toString().padStart(2,'0');
+  document.getElementById('timeDisplay').textContent = `${m}:${s} / 41:08`;
+  setTimeout(simulateProgress, 400);
+}
+
+function seekVideo(e) {
+  const rect = e.currentTarget.getBoundingClientRect();
+  progress = ((e.clientX - rect.left) / rect.width) * 100;
+  document.getElementById('progressFill').style.width = progress + '%';
+}
+
+function showNotify(msg) {
+  const n = document.getElementById('notify');
+  n.textContent = msg; n.classList.add('show');
+  setTimeout(() => n.classList.remove('show'), 3000);
+}
+
+document.addEventListener('contextmenu', e => { e.preventDefault(); showNotify('⚠️ النقر اليميني محظور'); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key)) || (e.ctrlKey && e.key === 'U')) {
+    e.preventDefault(); showNotify('⚠️ هذا الإجراء محظور على المنصة');
+  }
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'PrintScreen') { e.preventDefault(); showNotify('⚠️ تم رصد محاولة سكرين شوت'); }
+});
+</script>
