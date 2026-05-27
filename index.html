@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>منصة د. رحمة مرسي — محاضرات بيولوجيا</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/player.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<!-- ══════════════════════ ANTI-INSPECT SHIELD ══════════════════════ -->
+<div id="devtoolsWarning" style="display:none; position:fixed; inset:0; background:#0d1b2a; z-index:99999; display:none; align-items:center; justify-content:center; flex-direction:column; gap:16px;">
+  <div style="font-size:60px;">🚫</div>
+  <div style="color:#ef4444; font-family:'Cairo',sans-serif; font-size:20px; font-weight:700;">تم رصد محاولة اختراق</div>
+  <div style="color:rgba(255,255,255,0.6); font-family:'Cairo',sans-serif; font-size:14px;">تم تسجيل هذه المحاولة</div>
+</div>
+
+<!-- ══════════════════════ NOTIFY TOAST ══════════════════════ -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toastIcon">🔐</span>
+  <span id="toastMsg"></span>
+</div>
+
+<!-- ══════════════════════ SCREEN: LOGIN ══════════════════════ -->
+<div class="screen active" id="screenLogin">
+  <div class="login-bg">
+    <div class="login-orb orb1"></div>
+    <div class="login-orb orb2"></div>
+    <div class="login-orb orb3"></div>
+    <div class="login-grid"></div>
+  </div>
+
+  <div class="login-card">
+    <div class="login-header">
+      <div class="univ-pill">🎓 جامعة الإسكندرية · كلية التربية</div>
+      <div class="login-avatar">ر</div>
+      <h1>د. رحمة مرسي</h1>
+      <p>منصة المحاضرات العلمية المحمية</p>
+    </div>
+
+    <div class="divider"><span>تسجيل الدخول الآمن</span></div>
+
+    <div class="error-box" id="errorBox">
+      <span>⚠️</span> <span id="errorText">بيانات غير صحيحة</span>
+    </div>
+
+    <div class="field-group">
+      <label>الاسم الكامل</label>
+      <div class="field-wrap">
+        <span class="field-icon">👤</span>
+        <input type="text" id="inpName" placeholder="أدخل اسمك الكامل" autocomplete="off" spellcheck="false">
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label>كود الدخول</label>
+      <div class="field-wrap">
+        <span class="field-icon">🔑</span>
+        <input type="password" id="inpCode" placeholder="كود المادة الدراسية" autocomplete="off" id="codeInput" onkeydown="if(event.key==='Enter') doLogin()">
+        <button class="toggle-pass" id="togglePass" onclick="togglePassword()" type="button">👁</button>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="doLogin()" id="btnLogin">
+      <span id="btnLoginText">دخول آمن</span>
+      <span class="btn-icon">←</span>
+    </button>
+
+    <div class="login-footer">
+      <div class="security-row">
+        <span>🔐 TLS 1.3</span>
+        <span>🛡 AES-256</span>
+        <span>🏷 Watermark</span>
+      </div>
+      <p>جميع الجلسات مشفرة ومُسجَّلة</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ SCREEN: MAIN ══════════════════════ -->
+<div class="screen" id="screenMain">
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-left">
+      <div class="header-logo">
+        <div class="logo-mark">ر</div>
+        <div class="logo-text">
+          <strong>د. رحمة مرسي</strong>
+          <span>منصة المحاضرات</span>
+        </div>
+      </div>
+    </div>
+
+    <nav class="header-nav" id="headerNav">
+      <button class="nav-btn active" data-tab="videos" onclick="switchTab('videos',this)">
+        <span>📹</span> المحاضرات
+      </button>
+      <button class="nav-btn" data-tab="subjects" onclick="switchTab('subjects',this)">
+        <span>📚</span> المواد
+      </button>
+      <button class="nav-btn" data-tab="security" onclick="switchTab('security',this)">
+        <span>🛡</span> الحماية
+      </button>
+      <button class="nav-btn admin-tab" id="adminNavBtn" data-tab="admin" onclick="switchTab('admin',this)" style="display:none">
+        <span>⚙️</span> الإدارة
+      </button>
+    </nav>
+
+    <div class="header-right">
+      <div class="user-pill">
+        <div class="user-avatar" id="userAvatar">ط</div>
+        <span id="userName">الطالب</span>
+        <div class="online-dot"></div>
+      </div>
+      <button class="btn-logout" onclick="doLogout()">خروج</button>
+    </div>
+  </header>
+
+  <!-- Hero Banner -->
+  <div class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">✦ محتوى حصري ومحمي بالكامل</div>
+      <h2 id="heroGreeting">أهلاً بك في منصة المحاضرات</h2>
+      <p>محاضرات مرئية متكاملة لمقررات البيولوجيا — محمية بأعلى معايير التشفير الرقمي وبصمة الطالب الديناميكية</p>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num" data-target="24">0</span><span class="stat-lbl">محاضرة</span></div>
+        <div class="stat"><span class="stat-num" data-target="6">0</span><span class="stat-lbl">مقررات</span></div>
+        <div class="stat"><span class="stat-num" data-target="186">0</span><span class="stat-lbl">طالب مسجل</span></div>
+        <div class="stat"><span class="stat-num" data-target="100">0</span><span class="stat-lbl">٪ مشفر</span></div>
+      </div>
+    </div>
+    <div class="hero-deco">
+      <div class="deco-circle c1"></div>
+      <div class="deco-circle c2"></div>
+      <div class="dna-strand">🧬</div>
+    </div>
+  </div>
+
+  <!-- Tab Content -->
+  <div class="page-content">
+
+    <!-- VIDEOS TAB -->
+    <div class="tab-panel active" id="tab-videos">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span class="title-accent"></span>
+          أحدث المحاضرات
+        </div>
+        <div class="header-actions">
+          <div class="search-box">
+            <span>🔍</span>
+            <input type="text" placeholder="ابحث في المحاضرات..." id="searchInput" oninput="filterVideos(this.value)">
+          </div>
+          <span class="count-badge" id="videoCount">24 فيديو</span>
+        </div>
+      </div>
+      <div class="filter-row">
+        <button class="filter-btn active" onclick="filterBySubject('all',this)">الكل</button>
+        <button class="filter-btn" onclick="filterBySubject('أحياء خلوية',this)">🔬 خلوية</button>
+        <button class="filter-btn" onclick="filterBySubject('علم الوراثة',this)">🧬 وراثة</button>
+        <button class="filter-btn" onclick="filterBySubject('فسيولوجيا النبات',this)">🌱 فسيولوجيا</button>
+        <button class="filter-btn" onclick="filterBySubject('كيمياء حيوية',this)">⚗️ كيمياء حيوية</button>
+        <button class="filter-btn" onclick="filterBySubject('أناتومي',this)">🫀 أناتومي</button>
+      </div>
+      <div class="video-grid" id="videosGrid"></div>
+    </div>
+
+    <!-- SUBJECTS TAB -->
+    <div class="tab-panel" id="tab-subjects">
+      <div class="panel-header">
+        <div class="panel-title"><span class="title-accent"></span>المواد الدراسية</div>
+      </div>
+      <div class="subjects-grid" id="subjectsGrid"></div>
+    </div>
+
+    <!-- SECURITY TAB -->
+    <div class="tab-panel" id="tab-security">
+      <div class="panel-header">
+        <div class="panel-title"><span class="title-accent"></span>نظام الحماية المتكامل</div>
+      </div>
+      <div class="security-grid">
+        <div class="sec-card">
+          <div class="sec-card-header">
+            <span class="sec-card-icon">🛡</span>
+            <h3>طبقات الحماية النشطة</h3>
+          </div>
+          <ul class="sec-list">
+            <li class="sec-item active"><div class="sec-dot active"></div><div class="sec-info"><strong>تشفير AES-256 للفيديو</strong><span>HLS Encryption — تشفير كامل على مستوى القطعة</span></div><span class="sec-badge on">✓ مفعّل</span></li>
+            <li class="sec-item active"><div class="sec-dot active"></div><div class="sec-info"><strong>Watermark ديناميكي</strong><span>اسم الطالب + ID + وقت المشاهدة مضمّن في الفيديو</span></div><span class="sec-badge on">✓ مفعّل</span></li>
+            <li class="sec-item active"><div class="sec-dot active"></div><div class="sec-info"><strong>Signed URL مؤقت</strong><span>روابط الفيديو تنتهي بعد 2 ساعة وتُربط بـ IP الطالب</span></div><span class="sec-badge on">✓ مفعّل</span></li>
+            <li class="sec-item active"><div class="sec-dot active"></div><div class="sec-info"><strong>حماية DevTools</strong><span>منع فتح أدوات المطور والكود المصدري</span></div><span class="sec-badge on">✓ مفعّل</span></li>
+            <li class="sec-item active"><div class="sec-dot active"></div><div class="sec-info"><strong>حظر النقر اليميني</strong><span>منع Copy / Save / Inspect Element</span></div><span class="sec-badge on">✓ مفعّل</span></li>
+            <li class="sec-item active"><div class="sec-dot active"></div><div class="sec-info"><strong>جلسة جهاز واحد</strong><span>لا يمكن مشاهدة نفس الكود على جهازين في نفس الوقت</span></div><span class="sec-badge on">✓ مفعّل</span></li>
+            <li class="sec-item active"><div class="sec-dot active"></div><div class="sec-info"><strong>تسجيل المحاولات المشبوهة</strong><span>كل محاولة اختراق تُسجَّل وتُرسَل للمشرف</span></div><span class="sec-badge on">✓ مفعّل</span></li>
+            <li class="sec-item warning"><div class="sec-dot warning"></div><div class="sec-info"><strong>منع السكرين شوت</strong><span>يعمل على iOS Safari وبعض Android — لا يمنع OBS الخارجي</span></div><span class="sec-badge warn">⚠ جزئي</span></li>
+          </ul>
+        </div>
+
+        <div class="sec-card dark">
+          <div class="sec-card-header">
+            <span class="sec-card-icon">🏷</span>
+            <h3>كيف يحميك الـ Watermark</h3>
+          </div>
+          <div class="watermark-demo" id="wmDemo">
+            <div class="wm-layer wm-fixed">د. رحمة مرسي · منصة محمية</div>
+            <div class="wm-layer wm-dynamic" id="wmDynamic">اسم الطالب · ID · الوقت</div>
+            <div class="wm-center-text">معاينة الـ Watermark</div>
+          </div>
+          <p class="sec-note">⚡ حتى لو سُجِّل الفيديو بكاميرا خارجية — اسم الطالب مطبوع بوضوح مما يمنع النشر ويُحدد المصدر.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMIN TAB -->
+    <div class="tab-panel" id="tab-admin">
+      <div class="panel-header">
+        <div class="panel-title"><span class="title-accent"></span>لوحة تحكم المشرف</div>
+        <span class="admin-badge">🔴 وضع المشرف</span>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-card-icon blue">🎬</div><div class="stat-card-num">24</div><div class="stat-card-lbl">فيديو محمي</div></div>
+        <div class="stat-card"><div class="stat-card-icon gold">👨‍🎓</div><div class="stat-card-num">186</div><div class="stat-card-lbl">طالب مسجل</div></div>
+        <div class="stat-card"><div class="stat-card-icon green">👁</div><div class="stat-card-num">1,240</div><div class="stat-card-lbl">مشاهدات الأسبوع</div></div>
+        <div class="stat-card"><div class="stat-card-icon red">⚠️</div><div class="stat-card-num">3</div><div class="stat-card-lbl">محاولة اختراق</div></div>
+      </div>
+
+      <!-- Upload Zone -->
+      <div class="section-title">رفع محاضرة جديدة</div>
+      <div class="upload-zone" id="uploadZone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)" onclick="document.getElementById('fileInput').click()">
+        <input type="file" id="fileInput" accept="video/*" style="display:none" onchange="handleFileSelect(event)">
+        <div class="upload-icon">📹</div>
+        <h4>اسحب الفيديو هنا أو انقر للاختيار</h4>
+        <p>MP4 · MOV · AVI — بحد أقصى 4 جيجابايت</p>
+        <div class="upload-tags">
+          <span class="utag green">✓ AES-256 تلقائي</span>
+          <span class="utag gold">✓ Watermark ديناميكي</span>
+          <span class="utag blue">✓ Signed URL</span>
+          <span class="utag">✓ HLS Streaming</span>
+        </div>
+      </div>
+      <div class="upload-progress" id="uploadProgress" style="display:none">
+        <div class="upload-progress-bar">
+          <div class="upload-progress-fill" id="uploadFill"></div>
+        </div>
+        <span id="uploadStatus">جاري الرفع والتشفير...</span>
+      </div>
+
+      <!-- Add New Code -->
+      <div class="section-title" style="margin-top:1.5rem">إضافة كود جديد</div>
+      <div class="add-code-form">
+        <input type="text" class="admin-input" id="newCodeSubject" placeholder="اسم المادة">
+        <input type="text" class="admin-input" id="newCodeValue" placeholder="الكود (مثال: bio2025)">
+        <input type="number" class="admin-input" id="newCodeLimit" placeholder="حد الاستخدام">
+        <button class="btn-primary small" onclick="addNewCode()">إضافة</button>
+      </div>
+
+      <!-- Codes Table -->
+      <div class="section-title" style="margin-top:1.5rem">أكواد الدخول</div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>الكود</th><th>المادة</th><th>الاستخدام</th><th>الحالة</th><th>إجراء</th></tr></thead>
+          <tbody id="codesTable"></tbody>
+        </table>
+      </div>
+
+      <!-- Students Table -->
+      <div class="section-title" style="margin-top:1.5rem">سجل الطلاب</div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>الاسم</th><th>المادة</th><th>آخر دخول</th><th>مشاهدات</th><th>الحالة</th><th>إجراء</th></tr></thead>
+          <tbody id="studentsTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div>🔐 منصة د. رحمة مرسي — جامعة الإسكندرية · كلية التربية · جميع الحقوق محفوظة 2025</div>
+    <div class="footer-security">🛡 TLS 1.3 &nbsp;·&nbsp; 🔏 AES-256 &nbsp;·&nbsp; 🏷 Watermark Active</div>
+  </footer>
+</div>
+
+<!-- ══════════════════════ SCREEN: PLAYER ══════════════════════ -->
+<div class="screen" id="screenPlayer">
+  <div class="player-topbar">
+    <button class="btn-back" onclick="backToMain()">
+      <span class="back-arrow">←</span> رجوع للمحاضرات
+    </button>
+    <div class="player-topbar-title" id="playerTitle">عنوان المحاضرة</div>
+    <div class="player-badges">
+      <span class="pbadge green">🔐 مشفر</span>
+      <span class="pbadge blue">🏷 Watermark</span>
+    </div>
+  </div>
+
+  <div class="player-stage">
+    <div class="player-wrap" id="playerWrap">
+      <!-- Actual video element (src set dynamically) -->
+      <div class="fake-video" id="fakeVideo">
+        <div class="fv-bg-anim"></div>
+        <button class="fv-play-btn" id="bigPlayBtn" onclick="togglePlay()">
+          <span id="bigPlayIcon">▶</span>
+        </button>
+        <div class="fv-title" id="fvTitle">عنوان المحاضرة</div>
+        <div class="fv-sub">انقر للتشغيل</div>
+        <div class="fv-subject-tag" id="fvSubject">المادة</div>
+      </div>
+
+      <!-- Watermark layers -->
+      <div class="wm-container">
+        <div class="wm-static">© د. رحمة مرسي</div>
+        <div class="wm-float wm-tr" id="wmTR"></div>
+        <div class="wm-float wm-bl" id="wmBL"></div>
+        <div class="wm-diagonal" id="wmDiag"></div>
+      </div>
+
+      <!-- Overlay blocker -->
+      <div class="video-blocker" id="videoblocker"></div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="player-sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-title">تفاصيل المحاضرة</div>
+        <h3 id="sideTitle">العنوان</h3>
+        <p id="sideDesc">الوصف</p>
+        <div class="side-tags" id="sideTags"></div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-title">قائمة التشغيل</div>
+        <div class="playlist" id="playlist"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="player-controls">
+    <div class="progress-bar" id="progressBar" onclick="seekVideo(event)">
+      <div class="progress-fill" id="progressFill"></div>
+      <div class="progress-thumb" id="progressThumb"></div>
+    </div>
+    <div class="controls-row">
+      <div class="ctrl-left">
+        <button class="ctrl-btn" onclick="skipBack()">⏮ 10</button>
+        <button class="ctrl-btn main-ctrl" onclick="togglePlay()" id="ctrlPlay">▶</button>
+        <button class="ctrl-btn" onclick="skipForward()">10 ⏭</button>
+        <span class="time-display" id="timeDisplay">00:00 / 00:00</span>
+      </div>
+      <div class="ctrl-right">
+        <button class="ctrl-btn" onclick="toggleMute()" id="muteBtn">🔊</button>
+        <div class="volume-slider"><input type="range" id="volumeSlider" min="0" max="100" value="80" oninput="setVolume(this.value)"></div>
+        <span class="quality-tag">HD 720</span>
+        <span class="drm-tag">🔐 DRM</span>
+        <button class="ctrl-btn" onclick="toggleFullscreen()">⛶</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/security.js"></script>
+<script src="js/player.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
