@@ -1,374 +1,717 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noindex, nofollow">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>منصة د. رحمة مرسي — محاضرات بيولوجيا</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/player.css">
-  <link rel="stylesheet" href="css/admin.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أ. رحمة مرسي | كلية التربية – الإسكندرية</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* تعريف الألوان الفاخرة كما وردت في التطبيق الأصلي AppColors */
+        :root {
+            --background: #070C14;     /* Deep academic navy-black */
+            --surface: #0F1824;        /* Rich dark navy surface */
+            --primary: #0A2540;        /* Royal Alexandria navy */
+            --primary-light: #0E3A5E;  /* Lighter navy */
+            --accent: #1A6BA8;         /* Vibrant academic blue */
+            --gold: #E8B84B;           /* Warm Alexandria gold */
+            --gold-light: #F5D07A;     /* Lighter gold shimmer */
+            --text-primary: #F0F4FA;   /* Clean academic white */
+            --text-secondary: #8899B3; /* Muted blue-grey */
+            --card-border: #1C2A3E;    /* Subtle navy border */
+            --green: #0F7B55;          /* Biology green accent */
+            --error: #E05C72;          /* Error red */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text-primary);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        /* حاوية الهاتف الذكي لمحاكاة واجهة التطبيق الأصلي */
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            background-color: var(--background);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            padding-bottom: 80px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.6);
+        }
+
+        /* شاشات التطبيق */
+        .screen {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── الهيدر الفاخر Luxurious Header ── */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, #061628 55%, var(--background) 100%);
+            padding: 28px 20px 30px 20px;
+        }
+
+        .top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .uni-badge {
+            background: linear-gradient(90deg, rgba(232, 184, 75, 0.22) 0%, rgba(26, 107, 168, 0.12) 100%);
+            padding: 7px 12px;
+            border-radius: 30px;
+            border: 1px solid rgba(232, 184, 75, 0.45);
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .notif-bell {
+            width: 40px;
+            height: 40px;
+            background-color: var(--surface);
+            border: 1px solid var(--card-border);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .notif-bell .dot {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            background-color: var(--gold);
+            border-radius: 50%;
+        }
+
+        .avatar-block {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 84px;
+            height: 84px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .avatar-glow {
+            position: absolute;
+            width: 84px;
+            height: 84px;
+            background: radial-gradient(rgba(232, 184, 75, 0.25), transparent);
+            border-radius: 50%;
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        .avatar-circle {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, var(--gold), #c49a2a);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(232, 184, 75, 0.45);
+            z-index: 1;
+            color: var(--primary);
+            font-size: 20px;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+
+        .verified-badge {
+            position: absolute;
+            bottom: 4px;
+            left: 4px;
+            width: 22px;
+            height: 22px;
+            background-color: var(--accent);
+            border: 2px solid var(--background);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+            color: white;
+            font-size: 10px;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.7; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.7; }
+        }
+
+        .tutor-info h1 {
+            font-size: 24px;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 4px;
+        }
+
+        .tutor-info p {
+            color: var(--gold);
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .badges-row {
+            display: flex;
+            gap: 6px;
+        }
+
+        .sub-badge {
+            background-color: rgba(10, 37, 64, 0.7);
+            border: 1px solid rgba(26, 107, 168, 0.4);
+            padding: 4px 9px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--gold-light);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .divider {
+            height: 1.5px;
+            background: linear-gradient(90deg, transparent 0%, rgba(232,184,75,0.7) 35%, rgba(26,107,168,0.4) 70%, transparent 100%);
+            margin: 16px 0;
+        }
+
+        .quote-block {
+            display: flex;
+            gap: 8px;
+        }
+
+        .quote-block span {
+            color: rgba(232, 184, 75, 0.5);
+            font-size: 28px;
+            line-height: 0.9;
+        }
+
+        .quote-block p {
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-style: italic;
+            font-weight: 500;
+            line-height: 1.6;
+        }
+
+        /* ── الإحصائيات Stats Row ── */
+        .stats-row {
+            display: flex;
+            gap: 10px;
+            padding: 20px 16px 0 16px;
+        }
+
+        .stat-card {
+            flex: 1;
+            background: linear-gradient(135deg, rgba(26,107,168,0.12) 0%, var(--surface) 100%);
+            border: 1px solid rgba(26,107,168,0.25);
+            border-radius: 16px;
+            padding: 16px 10px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .stat-card.green-theme {
+            background: linear-gradient(135deg, rgba(15,123,85,0.12) 0%, var(--surface) 100%);
+            border: 1px solid rgba(15,123,85,0.25);
+        }
+        .stat-card.gold-theme {
+            background: linear-gradient(135deg, rgba(232,184,75,0.12) 0%, var(--surface) 100%);
+            border: 1px solid rgba(232,184,75,0.25);
+        }
+
+        .stat-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+            margin-bottom: 7px;
+        }
+        .stat-card .stat-icon { background: rgba(26,107,168,0.15); color: var(--accent); }
+        .stat-card.green-theme .stat-icon { background: rgba(15,123,85,0.15); color: var(--green); }
+        .stat-card.gold-theme .stat-icon { background: rgba(232,184,75,0.15); color: var(--gold); }
+
+        .stat-card h3 { font-size: 17px; font-weight: 900; color: var(--text-primary); }
+        .stat-card p { font-size: 10px; font-weight: 500; color: var(--text-secondary); }
+
+        /* ── كارت التفعيل Activation Card ── */
+        .activation-card {
+            margin: 20px 16px 0 16px;
+            padding: 22px;
+            background: linear-gradient(135deg, var(--primary) 0%, #0A1E32 50%, var(--surface) 100%);
+            border-radius: 22px;
+            border: 1px solid rgba(232, 184, 75, 0.4);
+            box-shadow: 0 4px 24px rgba(232,184,75,0.1);
+        }
+
+        .card-header-act {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .act-icon-box {
+            position: relative;
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(rgba(232,184,75,0.3), rgba(232,184,75,0.1));
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--gold);
+            font-size: 20px;
+        }
+
+        .act-title h3 { color: var(--gold); font-size: 17px; font-weight: 800; }
+        .act-title p { color: var(--text-secondary); font-size: 12px; }
+
+        .activation-card input {
+            width: 100%;
+            height: 52px;
+            background-color: var(--surface);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            text-align: center;
+            color: var(--text-primary);
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            margin-bottom: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .activation-card input:focus {
+            border-color: var(--gold);
+        }
+
+        .activation-card button {
+            width: 100%;
+            height: 52px;
+            background-color: var(--gold);
+            color: var(--background);
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .activation-card button:active { opacity: 0.8; }
+
+        .feedback-msg {
+            margin-top: 12px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+            display: none;
+        }
+
+        .feedback-msg.success {
+            background-color: rgba(15, 123, 85, 0.15);
+            border: 1px solid rgba(232, 184, 75, 0.4);
+            color: var(--gold);
+            display: block;
+        }
+
+        .feedback-msg.error {
+            background-color: rgba(224, 92, 114, 0.15);
+            border: 1px solid rgba(224, 92, 114, 0.4);
+            color: var(--error);
+            display: block;
+        }
+
+        /* ── الفِرَق الدراسية University Years Grid ── */
+        .section-title {
+            padding: 22px 16px 14px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .title-main {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .title-indicator {
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(to bottom, var(--gold), var(--accent));
+            border-radius: 2px;
+        }
+
+        .title-main h2 { font-size: 17px; font-weight: 900; }
+        .section-title span { color: var(--text-secondary); font-size: 12px; font-weight: 500; }
+
+        .years-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding: 0 16px;
+        }
+
+        .year-box {
+            border-radius: 18px;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        }
+
+        .year-box .emoji-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+        }
+
+        .year-info h4 { font-size: 14px; font-weight: 800; line-height: 1.2; }
+        .year-info p { font-size: 11px; font-weight: 600; margin-top: 3px; }
+        .year-action { display: flex; align-items: center; gap: 4px; font-size: 10px; color: var(--text-secondary); margin-top: 5px; }
+
+        /* تلوين فِرَق العرض حسب الألوان في التطبيق */
+        .y1 { background-color: #071E34; border: 1.2px solid rgba(26, 107, 168, 0.45); }
+        .y1 .emoji-circle { background-color: rgba(26, 107, 168, 0.12); border: 1px solid rgba(26, 107, 168, 0.3); }
+        .y1 h4 { color: var(--text-primary); } .y1 p { color: var(--accent); }
+
+        .y2 { background-color: #221A04; border: 1.2px solid rgba(232, 184, 75, 0.45); }
+        .y2 .emoji-circle { background-color: rgba(232, 184, 75, 0.12); border: 1px solid rgba(232, 184, 75, 0.3); }
+        .y2 h4 { color: var(--text-primary); } .y2 p { color: var(--gold); }
+
+        .y3 { background-color: #041E1C; border: 1.2px solid rgba(78, 205, 196, 0.45); }
+        .y3 .emoji-circle { background-color: rgba(78, 205, 196, 0.12); border: 1px solid rgba(78, 205, 196, 0.3); }
+        .y3 h4 { color: var(--text-primary); } .y3 p { color: #4ECDC4; }
+
+        .y4 { background-color: #1C0620; border: 1.2px solid rgba(224, 122, 232, 0.45); }
+        .y4 .emoji-circle { background-color: rgba(224, 122, 232, 0.12); border: 1px solid rgba(224, 122, 232, 0.3); }
+        .y4 h4 { color: var(--text-primary); } .y4 p { color: #E07AE8; }
+
+
+        /* ── شريط التنقل السفلي المطور Bottom Navigation ── */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 480px;
+            background-color: var(--surface);
+            border-top: 1px solid var(--card-border);
+            display: flex;
+            height: 70px;
+            z-index: 100;
+            box-shadow: 0 -4px 20px rgba(10, 37, 64, 0.3);
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-secondary);
+            cursor: pointer;
+            gap: 4px;
+            transition: color 0.3s;
+        }
+
+        .nav-item i { font-size: 20px; }
+        .nav-item span { font-size: 11px; }
+
+        .nav-item.active {
+            color: var(--gold);
+        }
+        .nav-item.active span { font-weight: 600; font-size: 12px; }
+
+        /* شاشات فارغة للمحاكاة */
+        .dummy-screen-content {
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+        .dummy-screen-content i {
+            font-size: 60px;
+            color: var(--gold);
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
 
-<!-- ══════════════════════ ANTI-INSPECT SHIELD ══════════════════════ -->
-<div id="devtoolsWarning" style="display:none; position:fixed; inset:0; background:#0d1b2a; z-index:99999; display:none; align-items:center; justify-content:center; flex-direction:column; gap:16px;">
-  <div style="font-size:60px;">🚫</div>
-  <div style="color:#ef4444; font-family:'Cairo',sans-serif; font-size:20px; font-weight:700;">تم رصد محاولة اختراق</div>
-  <div style="color:rgba(255,255,255,0.6); font-family:'Cairo',sans-serif; font-size:14px;">تم تسجيل هذه المحاولة</div>
-</div>
+    <div class="app-container">
 
-<!-- ══════════════════════ NOTIFY TOAST ══════════════════════ -->
-<div class="toast" id="toast">
-  <span class="toast-icon" id="toastIcon">🔐</span>
-  <span id="toastMsg"></span>
-</div>
+        <div id="home-screen" class="screen active">
+            <div class="header">
+                <div class="top-row">
+                    <div class="uni-badge">
+                        <i class="fa-solid fa-building-columns"></i>
+                        كلية التربية · جامعة الإسكندرية
+                    </div>
+                    <div class="notif-bell">
+                        <i class="fa-regular fa-bell"></i>
+                        <div class="dot"></div>
+                    </div>
+                </div>
 
-<!-- ══════════════════════ SCREEN: LOGIN ══════════════════════ -->
-<div class="screen active" id="screenLogin">
-  <div class="login-bg">
-    <div class="login-orb orb1"></div>
-    <div class="login-orb orb2"></div>
-    <div class="login-orb orb3"></div>
-    <div class="login-grid"></div>
-  </div>
+                <div class="avatar-block">
+                    <div class="avatar-container">
+                        <div class="avatar-glow"></div>
+                        <div class="avatar-circle">ر م</div>
+                        <div class="verified-badge">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                    </div>
+                    <div class="tutor-info">
+                        <h1>أ. رحمة مرسي</h1>
+                        <p>مدرّسة الأحياء · كلية التربية</p>
+                        <div class="badges-row">
+                            <div class="sub-badge"><i class="fa-solid fa-flask"></i> أحياء جامعي</div>
+                            <div class="sub-badge"><i class="fa-solid fa-graduation-cap"></i> كلية التربية</div>
+                        </div>
+                    </div>
+                </div>
 
-  <div class="login-card">
-    <div class="login-header">
-      <div class="univ-pill">🎓 جامعة الإسكندرية · كلية التربية</div>
-      <div class="login-avatar">ر</div>
-      <h1>د. رحمة مرسي</h1>
-      <p>منصة المحاضرات العلمية المحمية</p>
-    </div>
+                <div class="divider"></div>
 
-    <div class="divider"><span>تسجيل الدخول الآمن</span></div>
+                <div class="quote-block">
+                    <span>❝</span>
+                    <p>الأحياء علم الحياة، وأنا هنا لأحببها إليك</p>
+                </div>
+            </div>
 
-    <div class="error-box" id="errorBox">
-      <span>⚠️</span> <span id="errorText">بيانات غير صحيحة</span>
-    </div>
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-video"></i></div>
+                    <h3>٤٨</h3>
+                    <p>درساً متاحاً</p>
+                </div>
+                <div class="stat-card green-theme">
+                    <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+                    <h3>١٢٠٠+</h3>
+                    <p>طالب مسجّل</p>
+                </div>
+                <div class="stat-card gold-theme">
+                    <div class="stat-icon"><i class="fa-solid fa-star"></i></div>
+                    <h3>٤.٩</h3>
+                    <p>تقييم التطبيق</p>
+                </div>
+            </div>
 
-    <div class="field-group">
-      <label>الاسم الكامل</label>
-      <div class="field-wrap">
-        <span class="field-icon">👤</span>
-        <input type="text" id="inpName" placeholder="أدخل اسمك الكامل" autocomplete="off" spellcheck="false">
-      </div>
-    </div>
+            <div class="activation-card">
+                <div class="card-header-act">
+                    <div class="act-icon-box">
+                        <i class="fa-solid fa-key"></i>
+                    </div>
+                    <div class="act-title">
+                        <h3>تفعيل اشتراكك</h3>
+                        <p>أدخل الكود للوصول إلى كامل المحتوى</p>
+                    </div>
+                </div>
+                <input type="text" id="activation-code" placeholder="XXXX-XXXX" autocomplete="off">
+                <button id="activate-btn" onclick="verifyActivationCode()">تفعيل الاشتراك</button>
+                <div id="feedback" class="feedback-msg"></div>
+                <p style="text-align: center; font-size: 10px; color: rgba(136,153,179,0.45); margin-top: 8px;">جرّب كود كود المحاكاة المبرمج: RAHMA2025</p>
+            </div>
 
-    <div class="field-group">
-      <label>كود الدخول</label>
-      <div class="field-wrap">
-        <span class="field-icon">🔑</span>
-        <input type="password" id="inpCode" placeholder="كود المادة الدراسية" autocomplete="off" id="codeInput" onkeydown="if(event.key==='Enter') doLogin()">
-        <button class="toggle-pass" id="togglePass" onclick="togglePassword()" type="button">👁</button>
-      </div>
-    </div>
+            <div class="section-title">
+                <div class="title-main">
+                    <div class="title-indicator"></div>
+                    <h2>الفِرَق الدراسية</h2>
+                </div>
+                <span>اختر فرقتك</span>
+            </div>
 
-    <button class="btn-primary" onclick="doLogin()" id="btnLogin">
-      <span id="btnLoginText">دخول آمن</span>
-      <span class="btn-icon">←</span>
-    </button>
-
-    <div class="login-footer">
-      <div class="security-row">
-        <span>🔐 TLS 1.3</span>
-        <span>🛡 AES-256</span>
-        <span>🏷 Watermark</span>
-      </div>
-      <p>جميع الجلسات مشفرة ومُسجَّلة</p>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════ SCREEN: MAIN ══════════════════════ -->
-<div class="screen" id="screenMain">
-
-  <!-- Header -->
-  <header class="site-header">
-    <div class="header-left">
-      <div class="header-logo">
-        <div class="logo-mark">ر</div>
-        <div class="logo-text">
-          <strong>د. رحمة مرسي</strong>
-          <span>منصة المحاضرات</span>
-        </div>
-      </div>
-    </div>
-
-    <nav class="header-nav" id="headerNav">
-      <button class="nav-btn active" data-tab="videos" onclick="switchTab('videos',this)">
-        <span>📹</span> المحاضرات
-      </button>
-      <button class="nav-btn" data-tab="subjects" onclick="switchTab('subjects',this)">
-        <span>📚</span> المواد
-      </button>
-      <button class="nav-btn" data-tab="security" onclick="switchTab('security',this)">
-        <span>🛡</span> الحماية
-      </button>
-      <button class="nav-btn admin-tab" id="adminNavBtn" data-tab="admin" onclick="switchTab('admin',this)" style="display:none">
-        <span>⚙️</span> الإدارة
-      </button>
-    </nav>
-
-    <div class="header-right">
-      <div class="user-pill">
-        <div class="user-avatar" id="userAvatar">ط</div>
-        <span id="userName">الطالب</span>
-        <div class="online-dot"></div>
-      </div>
-      <button class="btn-logout" onclick="doLogout()">خروج</button>
-    </div>
-  </header>
-
-  <!-- Hero Banner -->
-  <div class="hero">
-    <div class="hero-content">
-      <div class="hero-badge">✦ محتوى حصري ومحمي بالكامل</div>
-      <h2 id="heroGreeting">أهلاً بك في منصة المحاضرات</h2>
-      <p>محاضرات مرئية متكاملة لمقررات البيولوجيا — محمية بأعلى معايير التشفير الرقمي وبصمة الطالب الديناميكية</p>
-      <div class="hero-stats">
-        <div class="stat"><span class="stat-num" data-target="24">0</span><span class="stat-lbl">محاضرة</span></div>
-        <div class="stat"><span class="stat-num" data-target="6">0</span><span class="stat-lbl">مقررات</span></div>
-        <div class="stat"><span class="stat-num" data-target="186">0</span><span class="stat-lbl">طالب مسجل</span></div>
-        <div class="stat"><span class="stat-num" data-target="100">0</span><span class="stat-lbl">٪ مشفر</span></div>
-      </div>
-    </div>
-    <div class="hero-deco">
-      <div class="deco-circle c1"></div>
-      <div class="deco-circle c2"></div>
-      <div class="dna-strand">🧬</div>
-    </div>
-  </div>
-
-  <!-- Tab Content -->
-  <div class="page-content">
-
-    <!-- VIDEOS TAB -->
-    <div class="tab-panel active" id="tab-videos">
-      <div class="panel-header">
-        <div class="panel-title">
-          <span class="title-accent"></span>
-          أحدث المحاضرات
-        </div>
-        <div class="header-actions">
-          <div class="search-box">
-            <span>🔍</span>
-            <input type="text" placeholder="ابحث في المحاضرات..." id="searchInput" oninput="filterVideos(this.value)">
-          </div>
-          <span class="count-badge" id="videoCount">24 فيديو</span>
-        </div>
-      </div>
-      <div class="filter-row">
-        <button class="filter-btn active" onclick="filterBySubject('all',this)">الكل</button>
-        <button class="filter-btn" onclick="filterBySubject('أحياء خلوية',this)">🔬 خلوية</button>
-        <button class="filter-btn" onclick="filterBySubject('علم الوراثة',this)">🧬 وراثة</button>
-        <button class="filter-btn" onclick="filterBySubject('فسيولوجيا النبات',this)">🌱 فسيولوجيا</button>
-        <button class="filter-btn" onclick="filterBySubject('كيمياء حيوية',this)">⚗️ كيمياء حيوية</button>
-        <button class="filter-btn" onclick="filterBySubject('أناتومي',this)">🫀 أناتومي</button>
-      </div>
-      <div class="video-grid" id="videosGrid"></div>
-    </div>
-
-    <!-- SUBJECTS TAB -->
-    <div class="tab-panel" id="tab-subjects">
-      <div class="panel-header">
-        <div class="panel-title"><span class="title-accent"></span>المواد الدراسية</div>
-      </div>
-      <div class="subjects-grid" id="subjectsGrid"></div>
-    </div>
-
-    <!-- SECURITY TAB -->
-    <div class="tab-panel" id="tab-security">
-      <div class="panel-header">
-        <div class="panel-title"><span class="title-accent"></span>نظام الحماية المتكامل</div>
-      </div>
-      <div class="security-grid">
-        <div class="sec-card">
-          <div class="sec-card-header">
-            <span class="sec-card-icon">🛡</span>
-            <h3>طبقات الحماية النشطة</h3>
-          </div>
-          <ul class="sec-list">
-            <li class="sec-item active"><div class="sec-dot active"></div><div class="sec-info"><strong>تشفير AES-256 للفيديو</strong><span>HLS Encryption — تشفير كامل على مستوى القطعة</span></div><span class="sec-badge on">✓ مفعّل</span></li>
-            <li class="sec-item active"><div class="sec-dot active"></div><div class="sec-info"><strong>Watermark ديناميكي</strong><span>اسم الطالب + ID + وقت المشاهدة مضمّن في الفيديو</span></div><span class="sec-badge on">✓ مفعّل</span></li>
-            <li class="sec-item active"><div class="sec-dot active"></div><div class="sec-info"><strong>Signed URL مؤقت</strong><span>روابط الفيديو تنتهي بعد 2 ساعة وتُربط بـ IP الطالب</span></div><span class="sec-badge on">✓ مفعّل</span></li>
-            <li class="sec-item active"><div class="sec-dot active"></div><div class="sec-info"><strong>حماية DevTools</strong><span>منع فتح أدوات المطور والكود المصدري</span></div><span class="sec-badge on">✓ مفعّل</span></li>
-            <li class="sec-item active"><div class="sec-dot active"></div><div class="sec-info"><strong>حظر النقر اليميني</strong><span>منع Copy / Save / Inspect Element</span></div><span class="sec-badge on">✓ مفعّل</span></li>
-            <li class="sec-item active"><div class="sec-dot active"></div><div class="sec-info"><strong>جلسة جهاز واحد</strong><span>لا يمكن مشاهدة نفس الكود على جهازين في نفس الوقت</span></div><span class="sec-badge on">✓ مفعّل</span></li>
-            <li class="sec-item active"><div class="sec-dot active"></div><div class="sec-info"><strong>تسجيل المحاولات المشبوهة</strong><span>كل محاولة اختراق تُسجَّل وتُرسَل للمشرف</span></div><span class="sec-badge on">✓ مفعّل</span></li>
-            <li class="sec-item warning"><div class="sec-dot warning"></div><div class="sec-info"><strong>منع السكرين شوت</strong><span>يعمل على iOS Safari وبعض Android — لا يمنع OBS الخارجي</span></div><span class="sec-badge warn">⚠ جزئي</span></li>
-          </ul>
+            <div class="years-grid">
+                <div class="year-box y1">
+                    <div class="emoji-circle">🧬</div>
+                    <div class="year-info">
+                        <h4>الفرقة الأولى</h4>
+                        <p>السنة الأولى</p>
+                        <div class="year-action"><i class="fa-solid fa-circle-play"></i> عرض المحاضرات</div>
+                    </div>
+                </div>
+                <div class="year-box y2">
+                    <div class="emoji-circle">🔬</div>
+                    <div class="year-info">
+                        <h4>الفرقة الثانية</h4>
+                        <p>السنة الثانية</p>
+                        <div class="year-action"><i class="fa-solid fa-circle-play"></i> عرض المحاضرات</div>
+                    </div>
+                </div>
+                <div class="year-box y3">
+                    <div class="emoji-circle">🧪</div>
+                    <div class="year-info">
+                        <h4>الفرقة الثالثة</h4>
+                        <p>السنة الثالثة</p>
+                        <div class="year-action"><i class="fa-solid fa-circle-play"></i> عرض المحاضرات</div>
+                    </div>
+                </div>
+                <div class="year-box y4">
+                    <div class="emoji-circle">🎓</div>
+                    <div class="year-info">
+                        <h4>الفرقة الرابعة</h4>
+                        <p>السنة الرابعة</p>
+                        <div class="year-action"><i class="fa-solid fa-circle-play"></i> عرض المحاضرات</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="sec-card dark">
-          <div class="sec-card-header">
-            <span class="sec-card-icon">🏷</span>
-            <h3>كيف يحميك الـ Watermark</h3>
-          </div>
-          <div class="watermark-demo" id="wmDemo">
-            <div class="wm-layer wm-fixed">د. رحمة مرسي · منصة محمية</div>
-            <div class="wm-layer wm-dynamic" id="wmDynamic">اسم الطالب · ID · الوقت</div>
-            <div class="wm-center-text">معاينة الـ Watermark</div>
-          </div>
-          <p class="sec-note">⚡ حتى لو سُجِّل الفيديو بكاميرا خارجية — اسم الطالب مطبوع بوضوح مما يمنع النشر ويُحدد المصدر.</p>
+        <div id="lessons-screen" class="screen">
+            <div class="dummy-screen-content">
+                <i class="fa-solid fa-circle-play"></i>
+                <h2>شاشة محاضراتي</h2>
+                <p>هنا تظهر قائمة الفيديوهات والمحاضرات الخاصة بالفرقة الدراسية المختارة.</p>
+            </div>
         </div>
-      </div>
-    </div>
 
-    <!-- ADMIN TAB -->
-    <div class="tab-panel" id="tab-admin">
-      <div class="panel-header">
-        <div class="panel-title"><span class="title-accent"></span>لوحة تحكم المشرف</div>
-        <span class="admin-badge">🔴 وضع المشرف</span>
-      </div>
-
-      <div class="stats-row">
-        <div class="stat-card"><div class="stat-card-icon blue">🎬</div><div class="stat-card-num">24</div><div class="stat-card-lbl">فيديو محمي</div></div>
-        <div class="stat-card"><div class="stat-card-icon gold">👨‍🎓</div><div class="stat-card-num">186</div><div class="stat-card-lbl">طالب مسجل</div></div>
-        <div class="stat-card"><div class="stat-card-icon green">👁</div><div class="stat-card-num">1,240</div><div class="stat-card-lbl">مشاهدات الأسبوع</div></div>
-        <div class="stat-card"><div class="stat-card-icon red">⚠️</div><div class="stat-card-num">3</div><div class="stat-card-lbl">محاولة اختراق</div></div>
-      </div>
-
-      <!-- Upload Zone -->
-      <div class="section-title">رفع محاضرة جديدة</div>
-      <div class="upload-zone" id="uploadZone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)" onclick="document.getElementById('fileInput').click()">
-        <input type="file" id="fileInput" accept="video/*" style="display:none" onchange="handleFileSelect(event)">
-        <div class="upload-icon">📹</div>
-        <h4>اسحب الفيديو هنا أو انقر للاختيار</h4>
-        <p>MP4 · MOV · AVI — بحد أقصى 4 جيجابايت</p>
-        <div class="upload-tags">
-          <span class="utag green">✓ AES-256 تلقائي</span>
-          <span class="utag gold">✓ Watermark ديناميكي</span>
-          <span class="utag blue">✓ Signed URL</span>
-          <span class="utag">✓ HLS Streaming</span>
+        <div id="exams-screen" class="screen">
+            <div class="dummy-screen-content">
+                <i class="fa-solid fa-file-signature"></i>
+                <h2>شاشة الاختبارات</h2>
+                <p>بنك الأسئلة والامتحانات الدورية المتاحة للطلاب لقياس مستواهم الأكاديمي.</p>
+            </div>
         </div>
-      </div>
-      <div class="upload-progress" id="uploadProgress" style="display:none">
-        <div class="upload-progress-bar">
-          <div class="upload-progress-fill" id="uploadFill"></div>
+
+        <div id="code-screen" class="screen">
+            <div class="dummy-screen-content">
+                <i class="fa-solid fa-credit-card"></i>
+                <h2>تفعيل الكروت</h2>
+                <p>صفحة مخصصة لشراء وشحن الكروت التعليمية الورقية مباشرة داخل الحساب.</p>
+            </div>
         </div>
-        <span id="uploadStatus">جاري الرفع والتشفير...</span>
-      </div>
 
-      <!-- Add New Code -->
-      <div class="section-title" style="margin-top:1.5rem">إضافة كود جديد</div>
-      <div class="add-code-form">
-        <input type="text" class="admin-input" id="newCodeSubject" placeholder="اسم المادة">
-        <input type="text" class="admin-input" id="newCodeValue" placeholder="الكود (مثال: bio2025)">
-        <input type="number" class="admin-input" id="newCodeLimit" placeholder="حد الاستخدام">
-        <button class="btn-primary small" onclick="addNewCode()">إضافة</button>
-      </div>
+        <div id="profile-screen" class="screen">
+            <div class="dummy-screen-content">
+                <i class="fa-solid fa-circle-user"></i>
+                <h2>حسابي الشخصي</h2>
+                <p>بيانات الطالب، إحصائيات تقدمه، والربط المسجل بقاعدة بيانات Supabase.</p>
+            </div>
+        </div>
 
-      <!-- Codes Table -->
-      <div class="section-title" style="margin-top:1.5rem">أكواد الدخول</div>
-      <div class="table-wrap">
-        <table class="data-table">
-          <thead><tr><th>الكود</th><th>المادة</th><th>الاستخدام</th><th>الحالة</th><th>إجراء</th></tr></thead>
-          <tbody id="codesTable"></tbody>
-        </table>
-      </div>
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="switchTab(this, 'home-screen')">
+                <i class="fa-solid fa-house"></i>
+                <span>الرئيسية</span>
+            </div>
+            <div class="nav-item" onclick="switchTab(this, 'lessons-screen')">
+                <i class="fa-solid fa-circle-play"></i>
+                <span>محاضراتي</span>
+            </div>
+            <div class="nav-item" onclick="switchTab(this, 'exams-screen')">
+                <i class="fa-solid fa-file-lines"></i>
+                <span>الاختبارات</span>
+            </div>
+            <div class="nav-item" onclick="switchTab(this, 'code-screen')">
+                <i class="fa-solid fa-credit-card"></i>
+                <span>تفعيل الكرت</span>
+            </div>
+            <div class="nav-item" onclick="switchTab(this, 'profile-screen')">
+                <i class="fa-solid fa-user"></i>
+                <span>حسابي</span>
+            </div>
+        </div>
 
-      <!-- Students Table -->
-      <div class="section-title" style="margin-top:1.5rem">سجل الطلاب</div>
-      <div class="table-wrap">
-        <table class="data-table">
-          <thead><tr><th>الاسم</th><th>المادة</th><th>آخر دخول</th><th>مشاهدات</th><th>الحالة</th><th>إجراء</th></tr></thead>
-          <tbody id="studentsTable"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <footer class="site-footer">
-    <div>🔐 منصة د. رحمة مرسي — جامعة الإسكندرية · كلية التربية · جميع الحقوق محفوظة 2025</div>
-    <div class="footer-security">🛡 TLS 1.3 &nbsp;·&nbsp; 🔏 AES-256 &nbsp;·&nbsp; 🏷 Watermark Active</div>
-  </footer>
-</div>
-
-<!-- ══════════════════════ SCREEN: PLAYER ══════════════════════ -->
-<div class="screen" id="screenPlayer">
-  <div class="player-topbar">
-    <button class="btn-back" onclick="backToMain()">
-      <span class="back-arrow">←</span> رجوع للمحاضرات
-    </button>
-    <div class="player-topbar-title" id="playerTitle">عنوان المحاضرة</div>
-    <div class="player-badges">
-      <span class="pbadge green">🔐 مشفر</span>
-      <span class="pbadge blue">🏷 Watermark</span>
-    </div>
-  </div>
-
-  <div class="player-stage">
-    <div class="player-wrap" id="playerWrap">
-      <!-- Actual video element (src set dynamically) -->
-      <div class="fake-video" id="fakeVideo">
-        <div class="fv-bg-anim"></div>
-        <button class="fv-play-btn" id="bigPlayBtn" onclick="togglePlay()">
-          <span id="bigPlayIcon">▶</span>
-        </button>
-        <div class="fv-title" id="fvTitle">عنوان المحاضرة</div>
-        <div class="fv-sub">انقر للتشغيل</div>
-        <div class="fv-subject-tag" id="fvSubject">المادة</div>
-      </div>
-
-      <!-- Watermark layers -->
-      <div class="wm-container">
-        <div class="wm-static">© د. رحمة مرسي</div>
-        <div class="wm-float wm-tr" id="wmTR"></div>
-        <div class="wm-float wm-bl" id="wmBL"></div>
-        <div class="wm-diagonal" id="wmDiag"></div>
-      </div>
-
-      <!-- Overlay blocker -->
-      <div class="video-blocker" id="videoblocker"></div>
     </div>
 
-    <!-- Sidebar -->
-    <div class="player-sidebar">
-      <div class="sidebar-section">
-        <div class="sidebar-title">تفاصيل المحاضرة</div>
-        <h3 id="sideTitle">العنوان</h3>
-        <p id="sideDesc">الوصف</p>
-        <div class="side-tags" id="sideTags"></div>
-      </div>
-      <div class="sidebar-section">
-        <div class="sidebar-title">قائمة التشغيل</div>
-        <div class="playlist" id="playlist"></div>
-      </div>
-    </div>
-  </div>
+    <script>
+        // دالة التنقل بين التبويبات بنعومة وسلاسة
+        function switchTab(navElement, screenId) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
+            
+            navElement.classList.add('active');
+            document.getElementById(screenId).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
-  <!-- Controls -->
-  <div class="player-controls">
-    <div class="progress-bar" id="progressBar" onclick="seekVideo(event)">
-      <div class="progress-fill" id="progressFill"></div>
-      <div class="progress-thumb" id="progressThumb"></div>
-    </div>
-    <div class="controls-row">
-      <div class="ctrl-left">
-        <button class="ctrl-btn" onclick="skipBack()">⏮ 10</button>
-        <button class="ctrl-btn main-ctrl" onclick="togglePlay()" id="ctrlPlay">▶</button>
-        <button class="ctrl-btn" onclick="skipForward()">10 ⏭</button>
-        <span class="time-display" id="timeDisplay">00:00 / 00:00</span>
-      </div>
-      <div class="ctrl-right">
-        <button class="ctrl-btn" onclick="toggleMute()" id="muteBtn">🔊</button>
-        <div class="volume-slider"><input type="range" id="volumeSlider" min="0" max="100" value="80" oninput="setVolume(this.value)"></div>
-        <span class="quality-tag">HD 720</span>
-        <span class="drm-tag">🔐 DRM</span>
-        <button class="ctrl-btn" onclick="toggleFullscreen()">⛶</button>
-      </div>
-    </div>
-  </div>
-</div>
+        // محاكاة التحقق من كود التفعيل المكتوب بالكود الأصلي (RAHMA2025)
+        function verifyActivationCode() {
+            const codeInput = document.getElementById('activation-code').value.trim();
+            const feedback = document.getElementById('feedback');
+            const btn = document.getElementById('activate-btn');
 
-<script src="js/data.js"></script>
-<script src="js/security.js"></script>
-<script src="js/player.js"></script>
-<script src="js/app.js"></script>
+            if (!codeInput) {
+                feedback.className = "feedback-msg error";
+                feedback.innerHTML = "يرجى إدخال كود التفعيل أولاً";
+                return;
+            }
+
+            // محاكاة تحميل السيرفر (2 ثانية تأخير كما في الـ Flutter code المرفق)
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري التحقق...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                btn.innerHTML = 'تفعيل الاشتراك';
+                btn.disabled = false;
+
+                if (codeInput.toUpperCase() === 'RAHMA2025') {
+                    feedback.className = "feedback-msg success";
+                    feedback.innerHTML = "✓ تم تفعيل الاشتراك بنجاح! أهلاً بك في منصة الأحياء";
+                } else {
+                    feedback.className = "feedback-msg error";
+                    feedback.innerHTML = "✗ كود غير صحيح. يرجى المراجعة والمحاولة مجدداً";
+                }
+            }, 1500);
+        }
+    </script>
 </body>
 </html>
