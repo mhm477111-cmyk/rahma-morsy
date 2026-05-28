@@ -3,715 +3,311 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>أ. رحمة مرسي | كلية التربية – الإسكندرية</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <title>منصة رحوم - مواد البايو والجيو</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* تعريف الألوان الفاخرة كما وردت في التطبيق الأصلي AppColors */
-        :root {
-            --background: #070C14;     /* Deep academic navy-black */
-            --surface: #0F1824;        /* Rich dark navy surface */
-            --primary: #0A2540;        /* Royal Alexandria navy */
-            --primary-light: #0E3A5E;  /* Lighter navy */
-            --accent: #1A6BA8;         /* Vibrant academic blue */
-            --gold: #E8B84B;           /* Warm Alexandria gold */
-            --gold-light: #F5D07A;     /* Lighter gold shimmer */
-            --text-primary: #F0F4FA;   /* Clean academic white */
-            --text-secondary: #8899B3; /* Muted blue-grey */
-            --card-border: #1C2A3E;    /* Subtle navy border */
-            --green: #0F7B55;          /* Biology green accent */
-            --error: #E05C72;          /* Error red */
+        body { font-family: 'Cairo', sans-serif; user-select: none; }
+        .watermark {
+            position: absolute; pointer-events: none; color: rgba(220, 38, 38, 0.25);
+            font-weight: bold; font-size: 1.5rem; z-index: 9999; animation: moveWatermark 10s linear infinite alternate;
         }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Cairo', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background-color: var(--background);
-            color: var(--text-primary);
-            display: flex;
-            justify-content: center;
-            min-height: 100vh;
-        }
-
-        /* حاوية الهاتف الذكي لمحاكاة واجهة التطبيق الأصلي */
-        .app-container {
-            width: 100%;
-            max-width: 480px;
-            background-color: var(--background);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            padding-bottom: 80px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.6);
-        }
-
-        /* شاشات التطبيق */
-        .screen {
-            display: none;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-
-        .screen.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ── الهيدر الفاخر Luxurious Header ── */
-        .header {
-            background: linear-gradient(135deg, var(--primary) 0%, #061628 55%, var(--background) 100%);
-            padding: 28px 20px 30px 20px;
-        }
-
-        .top-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        .uni-badge {
-            background: linear-gradient(90deg, rgba(232, 184, 75, 0.22) 0%, rgba(26, 107, 168, 0.12) 100%);
-            padding: 7px 12px;
-            border-radius: 30px;
-            border: 1px solid rgba(232, 184, 75, 0.45);
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--gold);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .notif-bell {
-            width: 40px;
-            height: 40px;
-            background-color: var(--surface);
-            border: 1px solid var(--card-border);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-
-        .notif-bell .dot {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 8px;
-            height: 8px;
-            background-color: var(--gold);
-            border-radius: 50%;
-        }
-
-        .avatar-block {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-        }
-
-        .avatar-container {
-            position: relative;
-            width: 84px;
-            height: 84px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .avatar-glow {
-            position: absolute;
-            width: 84px;
-            height: 84px;
-            background: radial-gradient(rgba(232, 184, 75, 0.25), transparent);
-            border-radius: 50%;
-            animation: pulse 2s infinite ease-in-out;
-        }
-
-        .avatar-circle {
-            width: 72px;
-            height: 72px;
-            background: linear-gradient(135deg, var(--gold), #c49a2a);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 0 20px rgba(232, 184, 75, 0.45);
-            z-index: 1;
-            color: var(--primary);
-            font-size: 20px;
-            font-weight: 900;
-            letter-spacing: 1px;
-        }
-
-        .verified-badge {
-            position: absolute;
-            bottom: 4px;
-            left: 4px;
-            width: 22px;
-            height: 22px;
-            background-color: var(--accent);
-            border: 2px solid var(--background);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2;
-            color: white;
-            font-size: 10px;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(0.95); opacity: 0.7; }
-            50% { transform: scale(1.05); opacity: 1; }
-            100% { transform: scale(0.95); opacity: 0.7; }
-        }
-
-        .tutor-info h1 {
-            font-size: 24px;
-            font-weight: 900;
-            line-height: 1.1;
-            margin-bottom: 4px;
-        }
-
-        .tutor-info p {
-            color: var(--gold);
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .badges-row {
-            display: flex;
-            gap: 6px;
-        }
-
-        .sub-badge {
-            background-color: rgba(10, 37, 64, 0.7);
-            border: 1px solid rgba(26, 107, 168, 0.4);
-            padding: 4px 9px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: 700;
-            color: var(--gold-light);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .divider {
-            height: 1.5px;
-            background: linear-gradient(90deg, transparent 0%, rgba(232,184,75,0.7) 35%, rgba(26,107,168,0.4) 70%, transparent 100%);
-            margin: 16px 0;
-        }
-
-        .quote-block {
-            display: flex;
-            gap: 8px;
-        }
-
-        .quote-block span {
-            color: rgba(232, 184, 75, 0.5);
-            font-size: 28px;
-            line-height: 0.9;
-        }
-
-        .quote-block p {
-            color: var(--text-secondary);
-            font-size: 13px;
-            font-style: italic;
-            font-weight: 500;
-            line-height: 1.6;
-        }
-
-        /* ── الإحصائيات Stats Row ── */
-        .stats-row {
-            display: flex;
-            gap: 10px;
-            padding: 20px 16px 0 16px;
-        }
-
-        .stat-card {
-            flex: 1;
-            background: linear-gradient(135deg, rgba(26,107,168,0.12) 0%, var(--surface) 100%);
-            border: 1px solid rgba(26,107,168,0.25);
-            border-radius: 16px;
-            padding: 16px 10px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .stat-card.green-theme {
-            background: linear-gradient(135deg, rgba(15,123,85,0.12) 0%, var(--surface) 100%);
-            border: 1px solid rgba(15,123,85,0.25);
-        }
-        .stat-card.gold-theme {
-            background: linear-gradient(135deg, rgba(232,184,75,0.12) 0%, var(--surface) 100%);
-            border: 1px solid rgba(232,184,75,0.25);
-        }
-
-        .stat-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 14px;
-            margin-bottom: 7px;
-        }
-        .stat-card .stat-icon { background: rgba(26,107,168,0.15); color: var(--accent); }
-        .stat-card.green-theme .stat-icon { background: rgba(15,123,85,0.15); color: var(--green); }
-        .stat-card.gold-theme .stat-icon { background: rgba(232,184,75,0.15); color: var(--gold); }
-
-        .stat-card h3 { font-size: 17px; font-weight: 900; color: var(--text-primary); }
-        .stat-card p { font-size: 10px; font-weight: 500; color: var(--text-secondary); }
-
-        /* ── كارت التفعيل Activation Card ── */
-        .activation-card {
-            margin: 20px 16px 0 16px;
-            padding: 22px;
-            background: linear-gradient(135deg, var(--primary) 0%, #0A1E32 50%, var(--surface) 100%);
-            border-radius: 22px;
-            border: 1px solid rgba(232, 184, 75, 0.4);
-            box-shadow: 0 4px 24px rgba(232,184,75,0.1);
-        }
-
-        .card-header-act {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin-bottom: 18px;
-        }
-
-        .act-icon-box {
-            position: relative;
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(rgba(232,184,75,0.3), rgba(232,184,75,0.1));
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--gold);
-            font-size: 20px;
-        }
-
-        .act-title h3 { color: var(--gold); font-size: 17px; font-weight: 800; }
-        .act-title p { color: var(--text-secondary); font-size: 12px; }
-
-        .activation-card input {
-            width: 100%;
-            height: 52px;
-            background-color: var(--surface);
-            border: 1px solid var(--card-border);
-            border-radius: 14px;
-            text-align: center;
-            color: var(--text-primary);
-            font-size: 18px;
-            font-weight: 700;
-            letter-spacing: 4px;
-            margin-bottom: 14px;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        .activation-card input:focus {
-            border-color: var(--gold);
-        }
-
-        .activation-card button {
-            width: 100%;
-            height: 52px;
-            background-color: var(--gold);
-            color: var(--background);
-            border: none;
-            border-radius: 14px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: opacity 0.3s;
-        }
-
-        .activation-card button:active { opacity: 0.8; }
-
-        .feedback-msg {
-            margin-top: 12px;
-            padding: 10px 14px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 600;
-            text-align: center;
-            display: none;
-        }
-
-        .feedback-msg.success {
-            background-color: rgba(15, 123, 85, 0.15);
-            border: 1px solid rgba(232, 184, 75, 0.4);
-            color: var(--gold);
-            display: block;
-        }
-
-        .feedback-msg.error {
-            background-color: rgba(224, 92, 114, 0.15);
-            border: 1px solid rgba(224, 92, 114, 0.4);
-            color: var(--error);
-            display: block;
-        }
-
-        /* ── الفِرَق الدراسية University Years Grid ── */
-        .section-title {
-            padding: 22px 16px 14px 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .title-main {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .title-indicator {
-            width: 4px;
-            height: 20px;
-            background: linear-gradient(to bottom, var(--gold), var(--accent));
-            border-radius: 2px;
-        }
-
-        .title-main h2 { font-size: 17px; font-weight: 900; }
-        .section-title span { color: var(--text-secondary); font-size: 12px; font-weight: 500; }
-
-        .years-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            padding: 0 16px;
-        }
-
-        .year-box {
-            border-radius: 18px;
-            padding: 12px 14px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            cursor: pointer;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-        }
-
-        .year-box .emoji-circle {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 22px;
-        }
-
-        .year-info h4 { font-size: 14px; font-weight: 800; line-height: 1.2; }
-        .year-info p { font-size: 11px; font-weight: 600; margin-top: 3px; }
-        .year-action { display: flex; align-items: center; gap: 4px; font-size: 10px; color: var(--text-secondary); margin-top: 5px; }
-
-        /* تلوين فِرَق العرض حسب الألوان في التطبيق */
-        .y1 { background-color: #071E34; border: 1.2px solid rgba(26, 107, 168, 0.45); }
-        .y1 .emoji-circle { background-color: rgba(26, 107, 168, 0.12); border: 1px solid rgba(26, 107, 168, 0.3); }
-        .y1 h4 { color: var(--text-primary); } .y1 p { color: var(--accent); }
-
-        .y2 { background-color: #221A04; border: 1.2px solid rgba(232, 184, 75, 0.45); }
-        .y2 .emoji-circle { background-color: rgba(232, 184, 75, 0.12); border: 1px solid rgba(232, 184, 75, 0.3); }
-        .y2 h4 { color: var(--text-primary); } .y2 p { color: var(--gold); }
-
-        .y3 { background-color: #041E1C; border: 1.2px solid rgba(78, 205, 196, 0.45); }
-        .y3 .emoji-circle { background-color: rgba(78, 205, 196, 0.12); border: 1px solid rgba(78, 205, 196, 0.3); }
-        .y3 h4 { color: var(--text-primary); } .y3 p { color: #4ECDC4; }
-
-        .y4 { background-color: #1C0620; border: 1.2px solid rgba(224, 122, 232, 0.45); }
-        .y4 .emoji-circle { background-color: rgba(224, 122, 232, 0.12); border: 1px solid rgba(224, 122, 232, 0.3); }
-        .y4 h4 { color: var(--text-primary); } .y4 p { color: #E07AE8; }
-
-
-        /* ── شريط التنقل السفلي المطور Bottom Navigation ── */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            max-width: 480px;
-            background-color: var(--surface);
-            border-top: 1px solid var(--card-border);
-            display: flex;
-            height: 70px;
-            z-index: 100;
-            box-shadow: 0 -4px 20px rgba(10, 37, 64, 0.3);
-        }
-
-        .nav-item {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: var(--text-secondary);
-            cursor: pointer;
-            gap: 4px;
-            transition: color 0.3s;
-        }
-
-        .nav-item i { font-size: 20px; }
-        .nav-item span { font-size: 11px; }
-
-        .nav-item.active {
-            color: var(--gold);
-        }
-        .nav-item.active span { font-weight: 600; font-size: 12px; }
-
-        /* شاشات فارغة للمحاكاة */
-        .dummy-screen-content {
-            padding: 40px 20px;
-            text-align: center;
-            color: var(--text-secondary);
-        }
-        .dummy-screen-content i {
-            font-size: 60px;
-            color: var(--gold);
-            margin-bottom: 20px;
+        @keyframes moveWatermark {
+            0% { top: 10%; left: 10%; }
+            100% { top: 80%; left: 70%; }
         }
     </style>
 </head>
-<body>
+<body class="bg-pink-50 text-gray-800" oncontextmenu="return false;">
 
-    <div class="app-container">
+    <div id="app" class="min-h-screen flex flex-col">
+        <header class="bg-gradient-to-r from-pink-500 to-purple-600 text-white p-4 shadow-md flex justify-between items-center">
+            <h1 class="text-2xl font-bold tracking-wide cursor-pointer" @click="screen = 'home'">🌸 عيلة رحوم للـ Bio & Geo</h1>
+            <div v-if="user" class="flex items-center gap-4">
+                <span class="bg-white/20 px-3 py-1 rounded-full text-sm">أهلاً يا {{ profile?.full_name || 'بطل' }}</span>
+                <button @click="logout" class="text-sm bg-red-500 hover:bg-red-600 px-3 py-1 rounded">خروج</button>
+            </div>
+        </header>
 
-        <div id="home-screen" class="screen active">
-            <div class="header">
-                <div class="top-row">
-                    <div class="uni-badge">
-                        <i class="fa-solid fa-building-columns"></i>
-                        كلية التربية · جامعة الإسكندرية
-                    </div>
-                    <div class="notif-bell">
-                        <i class="fa-regular fa-bell"></i>
-                        <div class="dot"></div>
-                    </div>
+        <main class="flex-1 p-6 max-w-6xl mx-auto w-full">
+            
+            <div v-if="!user" class="max-w-md mx-auto bg-white p-8 rounded-2xl shadow-xl mt-10">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-bold text-purple-700">{{ isLogin ? 'جاهز للمذاكرة مع رحوم؟' : 'انضم لعيلة رحوم' }}</h2>
+                    <p class="text-gray-500 text-sm mt-1">طريقك للتقفيل في البايو والجيو يبدأ هنا!</p>
                 </div>
+                
+                <form @submit.prevent="isLogin ? login() : register()" class="space-y-4">
+                    <div v-if="!isLogin">
+                        <label class="block text-sm font-semibold mb-1">الاسم بالكامل</label>
+                        <input type="text" v-model="authForm.name" required class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-pink-400 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">البريد الإلكتروني</label>
+                        <input type="email" v-model="authForm.email" required class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-pink-400 outline-none">
+                    </div>
+                    <div v-if="!isLogin">
+                        <label class="block text-sm font-semibold mb-1">رقم التليفون</label>
+                        <input type="tel" v-model="authForm.phone" required class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-pink-400 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">كلمة المرور</label>
+                        <input type="password" v-model="authForm.password" required class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-pink-400 outline-none">
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white p-3 rounded-lg font-bold shadow-md hover:opacity-90">
+                        {{ isLogin ? 'تسجيل الدخول' : 'إنشاء حساب جديد' }}
+                    </button>
+                </form>
+                
+                <div class="text-center mt-4">
+                    <button @click="isLogin = !isLogin" class="text-purple-600 hover:underline text-sm">
+                        {{ isLogin ? 'معندكش حساب؟ سجل هنا' : 'عندك حساب بالفعل؟ ادخل من هنا' }}
+                    </button>
+                </div>
+            </div>
 
-                <div class="avatar-block">
-                    <div class="avatar-container">
-                        <div class="avatar-glow"></div>
-                        <div class="avatar-circle">ر م</div>
-                        <div class="verified-badge">
-                            <i class="fa-solid fa-check"></i>
+            <div v-if="user && profile && !profile.is_active" class="text-center max-w-md mx-auto bg-white p-8 rounded-2xl shadow-xl mt-10">
+                <i class="fas fa-hourglass-half text-6xl text-amber-500 mb-4 animate-pulse"></i>
+                <h2 class="text-2xl font-bold text-gray-700">حسابك قيد التفعيل!</h2>
+                <p class="text-gray-500 mt-2">منورنا يا بطل! رحوم بتراجع البيانات وهتفعلك الحساب فوراً. تواصل مع الدعم لتسريع العملية.</p>
+            </div>
+
+            <div v-if="user && profile?.is_active">
+                
+                <div v-if="screen === 'home'">
+                    <h2 class="text-2xl font-bold text-purple-800 mb-6 text-center">اختار فرقتك الدراسية يا بطل 🎓</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div v-for="year in [1, 2, 3, 4]" :key="year" @click="selectYear(year)" 
+                             class="bg-white p-8 rounded-2xl shadow-md border-2 border-transparent hover:border-pink-400 cursor-pointer text-center transition-all transform hover:-translate-y-2">
+                            <div class="text-4xl mb-3">⭐</div>
+                            <h3 class="text-xl font-bold text-gray-700">الفرقة {{ getYearName(year) }}</h3>
+                            <p class="text-gray-400 text-sm mt-1">مقررات البايو والجيو</p>
                         </div>
                     </div>
-                    <div class="tutor-info">
-                        <h1>أ. رحمة مرسي</h1>
-                        <p>مدرّسة الأحياء · كلية التربية</p>
-                        <div class="badges-row">
-                            <div class="sub-badge"><i class="fa-solid fa-flask"></i> أحياء جامعي</div>
-                            <div class="sub-badge"><i class="fa-solid fa-graduation-cap"></i> كلية التربية</div>
+                </div>
+
+                <div v-if="screen === 'courses'">
+                    <button @click="screen = 'home'" class="mb-4 text-purple-600 font-bold"><i class="fas fa-arrow-right"></i> كل الفرق</button>
+                    <h2 class="text-2xl font-bold text-purple-800 mb-6">الفرقة {{ getYearName(selectedYear) }} - اختر المقرر ✨</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div @click="selectSubject('bio')" class="bg-gradient-to-br from-green-400 to-emerald-600 text-white p-8 rounded-2xl shadow-lg cursor-pointer text-center">
+                            <i class="fas fa-dna text-5xl mb-3"></i>
+                            <h3 class="text-2xl font-bold">علم الأحياء (Biology)</h3>
+                        </div>
+                        <div @click="selectSubject('geo')" class="bg-gradient-to-br from-amber-400 to-orange-600 text-white p-8 rounded-2xl shadow-lg cursor-pointer text-center">
+                            <i class="fas fa-globe-americas text-5xl mb-3"></i>
+                            <h3 class="text-2xl font-bold">جيولوجيا (Geology)</h3>
                         </div>
                     </div>
                 </div>
 
-                <div class="divider"></div>
-
-                <div class="quote-block">
-                    <span>❝</span>
-                    <p>الأحياء علم الحياة، وأنا هنا لأحببها إليك</p>
-                </div>
-            </div>
-
-            <div class="stats-row">
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fa-solid fa-video"></i></div>
-                    <h3>٤٨</h3>
-                    <p>درساً متاحاً</p>
-                </div>
-                <div class="stat-card green-theme">
-                    <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
-                    <h3>١٢٠٠+</h3>
-                    <p>طالب مسجّل</p>
-                </div>
-                <div class="stat-card gold-theme">
-                    <div class="stat-icon"><i class="fa-solid fa-star"></i></div>
-                    <h3>٤.٩</h3>
-                    <p>تقييم التطبيق</p>
-                </div>
-            </div>
-
-            <div class="activation-card">
-                <div class="card-header-act">
-                    <div class="act-icon-box">
-                        <i class="fa-solid fa-key"></i>
-                    </div>
-                    <div class="act-title">
-                        <h3>تفعيل اشتراكك</h3>
-                        <p>أدخل الكود للوصول إلى كامل المحتوى</p>
+                <div v-if="screen === 'lectures'">
+                    <button @click="screen = 'courses'" class="mb-4 text-purple-600 font-bold"><i class="fas fa-arrow-right"></i> تغيير المقرر</button>
+                    <h2 class="text-2xl font-bold text-purple-800 mb-6">المحاضرات المتاحة ليك 🎯</h2>
+                    
+                    <div v-if="lectures.length === 0" class="text-gray-500 text-center py-10 bg-white rounded-xl">مفيش محاضرات نزلت هنا لسه، رحوم هترفعها قريب!</div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div v-for="lec in lectures" :key="lec.id" class="bg-white p-5 rounded-xl shadow-md border flex flex-col justify-between">
+                            <div>
+                                <h3 class="font-bold text-lg text-gray-800 mb-2">📌 {{ lec.title }}</h3>
+                                <p class="text-xs text-gray-400 mb-4">تاريخ الرفع: {{ new Date(lec.created_at).toLocaleDateString('ar-EG') }}</p>
+                            </div>
+                            
+                            <div v-if="isLecUnlocked(lec.id)">
+                                <button @click="openLecture(lec)" class="w-full bg-purple-600 text-white py-2 rounded-lg font-bold hover:bg-purple-700">
+                                    <i class="fas fa-play-circle ml-1"></i> دخول المحاضرة
+                                </button>
+                            </div>
+                            <div v-else class="space-y-2">
+                                <p class="text-xs text-red-500 font-semibold"><i class="fas fa-lock text-xs"></i> المحاضرة مقفولة، محتاجة كود تفعيل</p>
+                                <div class="flex gap-2">
+                                    <input type="text" :id="'code-'+lec.id" placeholder="دخل كود فك التشفير" class="border p-2 rounded-lg text-sm flex-1 outline-none">
+                                    <button @click="unlockLecture(lec.id)" class="bg-pink-500 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-pink-600">تفعيل</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <input type="text" id="activation-code" placeholder="XXXX-XXXX" autocomplete="off">
-                <button id="activate-btn" onclick="verifyActivationCode()">تفعيل الاشتراك</button>
-                <div id="feedback" class="feedback-msg"></div>
-                <p style="text-align: center; font-size: 10px; color: rgba(136,153,179,0.45); margin-top: 8px;">جرّب كود كود المحاكاة المبرمج: RAHMA2025</p>
-            </div>
 
-            <div class="section-title">
-                <div class="title-main">
-                    <div class="title-indicator"></div>
-                    <h2>الفِرَق الدراسية</h2>
-                </div>
-                <span>اختر فرقتك</span>
-            </div>
+                <div v-if="screen === 'view-lecture' && currentLecture" class="space-y-6">
+                    <button @click="screen = 'lectures'" class="text-purple-600 font-bold"><i class="fas fa-arrow-right"></i> رجوع للمحاضرات</button>
+                    <h2 class="text-2xl font-bold text-purple-800">{{ currentLecture.title }}</h2>
+                    
+                    <div class="relative bg-black rounded-2xl overflow-hidden aspect-video shadow-2xl">
+                        <div class="watermark">{{ profile.full_name }} - {{ profile.phone }}</div>
+                        <iframe class="w-full h-full" :src="'https://www.youtube.com/embed/' + getYoutubeId(currentLecture.youtube_url) + '?rel=0&modestbranding=1'" frameborder="0" allowfullscreen></iframe>
+                    </div>
 
-            <div class="years-grid">
-                <div class="year-box y1">
-                    <div class="emoji-circle">🧬</div>
-                    <div class="year-info">
-                        <h4>الفرقة الأولى</h4>
-                        <p>السنة الأولى</p>
-                        <div class="year-action"><i class="fa-solid fa-circle-play"></i> عرض المحاضرات</div>
+                    <div v-if="currentLecture.pdf_url" class="bg-white p-6 rounded-xl shadow-md">
+                        <h3 class="font-bold text-lg mb-3 text-purple-700"><i class="fas fa-file-pdf ml-2"></i> المذكرة المرفقة مع المحاضرة</h3>
+                        <p class="text-sm text-gray-500 mb-4">المذكرة محمية بعلامة مائية باسمك ورقمك، ممنوع التداول للحفاظ على مجهود رحوم.</p>
+                        <div class="relative border-4 border-dashed border-gray-200 rounded-xl p-4 text-center bg-gray-50">
+                            <div class="watermark text-red-600/30 font-bold text-sm absolute inset-0 flex items-center justify-center pointer-events-none text-center">
+                                {{ profile.full_name }} <br> {{ profile.phone }}
+                            </div>
+                            <a :href="currentLecture.pdf_url" target="_blank" class="inline-block bg-emerald-500 text-white px-6 py-3 rounded-xl font-bold shadow hover:bg-emerald-600">
+                                <i class="fas fa-external-link-alt ml-1"></i> فتح ملف الـ PDF بأمان
+                            </a>
+                        </div>
                     </div>
                 </div>
-                <div class="year-box y2">
-                    <div class="emoji-circle">🔬</div>
-                    <div class="year-info">
-                        <h4>الفرقة الثانية</h4>
-                        <p>السنة الثانية</p>
-                        <div class="year-action"><i class="fa-solid fa-circle-play"></i> عرض المحاضرات</div>
-                    </div>
-                </div>
-                <div class="year-box y3">
-                    <div class="emoji-circle">🧪</div>
-                    <div class="year-info">
-                        <h4>الفرقة الثالثة</h4>
-                        <p>السنة الثالثة</p>
-                        <div class="year-action"><i class="fa-solid fa-circle-play"></i> عرض المحاضرات</div>
-                    </div>
-                </div>
-                <div class="year-box y4">
-                    <div class="emoji-circle">🎓</div>
-                    <div class="year-info">
-                        <h4>الفرقة الرابعة</h4>
-                        <p>السنة الرابعة</p>
-                        <div class="year-action"><i class="fa-solid fa-circle-play"></i> عرض المحاضرات</div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <div id="lessons-screen" class="screen">
-            <div class="dummy-screen-content">
-                <i class="fa-solid fa-circle-play"></i>
-                <h2>شاشة محاضراتي</h2>
-                <p>هنا تظهر قائمة الفيديوهات والمحاضرات الخاصة بالفرقة الدراسية المختارة.</p>
             </div>
-        </div>
+        </main>
 
-        <div id="exams-screen" class="screen">
-            <div class="dummy-screen-content">
-                <i class="fa-solid fa-file-signature"></i>
-                <h2>شاشة الاختبارات</h2>
-                <p>بنك الأسئلة والامتحانات الدورية المتاحة للطلاب لقياس مستواهم الأكاديمي.</p>
-            </div>
-        </div>
-
-        <div id="code-screen" class="screen">
-            <div class="dummy-screen-content">
-                <i class="fa-solid fa-credit-card"></i>
-                <h2>تفعيل الكروت</h2>
-                <p>صفحة مخصصة لشراء وشحن الكروت التعليمية الورقية مباشرة داخل الحساب.</p>
-            </div>
-        </div>
-
-        <div id="profile-screen" class="screen">
-            <div class="dummy-screen-content">
-                <i class="fa-solid fa-circle-user"></i>
-                <h2>حسابي الشخصي</h2>
-                <p>بيانات الطالب، إحصائيات تقدمه، والربط المسجل بقاعدة بيانات Supabase.</p>
-            </div>
-        </div>
-
-        <div class="bottom-nav">
-            <div class="nav-item active" onclick="switchTab(this, 'home-screen')">
-                <i class="fa-solid fa-house"></i>
-                <span>الرئيسية</span>
-            </div>
-            <div class="nav-item" onclick="switchTab(this, 'lessons-screen')">
-                <i class="fa-solid fa-circle-play"></i>
-                <span>محاضراتي</span>
-            </div>
-            <div class="nav-item" onclick="switchTab(this, 'exams-screen')">
-                <i class="fa-solid fa-file-lines"></i>
-                <span>الاختبارات</span>
-            </div>
-            <div class="nav-item" onclick="switchTab(this, 'code-screen')">
-                <i class="fa-solid fa-credit-card"></i>
-                <span>تفعيل الكرت</span>
-            </div>
-            <div class="nav-item" onclick="switchTab(this, 'profile-screen')">
-                <i class="fa-solid fa-user"></i>
-                <span>حسابي</span>
-            </div>
-        </div>
-
+        <footer class="text-center p-4 text-xs text-gray-400 bg-white border-t">
+            كل الحقوق محفوظة لـ د/ رحمة مرسي (رحوم) © 2026 - برمجة وإشراف Mocontrol.online
+        </footer>
     </div>
 
     <script>
-        // دالة التنقل بين التبويبات بنعومة وسلاسة
-        function switchTab(navElement, screenId) {
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
-            
-            navElement.classList.add('active');
-            document.getElementById(screenId).classList.add('active');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+        const { createApp, ref, onMounted } = Vue;
 
-        // محاكاة التحقق من كود التفعيل المكتوب بالكود الأصلي (RAHMA2025)
-        function verifyActivationCode() {
-            const codeInput = document.getElementById('activation-code').value.trim();
-            const feedback = document.getElementById('feedback');
-            const btn = document.getElementById('activate-btn');
+        // إعدادات سوبابيز (استبدلها ببياناتك الخاصة)
+        const SUPABASE_URL = "YOUR_SUPABASE_URL";
+        const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-            if (!codeInput) {
-                feedback.className = "feedback-msg error";
-                feedback.innerHTML = "يرجى إدخال كود التفعيل أولاً";
-                return;
+        createApp({
+            setup() {
+                const screen = ref('home'); // home, courses, lectures, view-lecture
+                const isLogin = ref(true);
+                const user = ref(null);
+                const profile = ref(null);
+                const selectedYear = ref(null);
+                const selectedSubject = ref(null);
+                
+                const authForm = ref({ email: '', password: '', name: '', phone: '' });
+                const lectures = ref([]);
+                const unlockedLecturesIds = ref([]);
+                const currentLecture = ref(null);
+
+                onMounted(() => {
+                    // مراقبة جلسة المستخدم
+                    supabase.auth.onAuthStateChange((event, session) => {
+                        user.value = session?.user || null;
+                        if (user.value) {
+                            fetchProfile();
+                        }
+                    });
+                    
+                    // منع اختصارات الـ Screenshot الشهيرة
+                    document.addEventListener('keydown', (e) => {
+                        if (e.key === 'PrintScreen' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+                            e.preventDefault();
+                            alert('ممنوع تصوير المحتوى يا بطل لحماية حقوق رحوم 🌸');
+                        }
+                    });
+                });
+
+                const fetchProfile = async () => {
+                    const { data } = await supabase.from('profiles').select('*').eq('id', user.value.id).single();
+                    profile.value = data;
+                    if (data && data.is_active) {
+                        fetchUnlockedLectures();
+                    }
+                };
+
+                const login = async () => {
+                    const { error } = await supabase.auth.signInWithPassword({
+                        email: authForm.value.email,
+                        password: authForm.value.password
+                    });
+                    if (error) alert(error.message);
+                };
+
+                const register = async () => {
+                    const { data, error } = await supabase.auth.signUp({
+                        email: authForm.value.email,
+                        password: authForm.value.password
+                    });
+                    if (error) return alert(error.message);
+
+                    if (data.user) {
+                        await supabase.from('profiles').insert({
+                            id: data.user.id,
+                            full_name: authForm.value.name,
+                            phone: authForm.value.phone,
+                            is_active: false
+                        });
+                        alert('حسابك اتعمل بنجاح! مستني تفعيل رحوم لحسابك خطوة بخطوة.');
+                        isLogin.value = true;
+                    }
+                };
+
+                const logout = () => supabase.auth.signOut();
+
+                const getYearName = (y) => ['الأولى', 'الثانية', 'الثالثة', 'الرابعة'][y-1];
+
+                const selectYear = (year) => {
+                    selectedYear.value = year;
+                    screen.value = 'courses';
+                };
+
+                const selectSubject = async (subject) => {
+                    selectedSubject.value = subject;
+                    screen.value = 'lectures';
+                    // جلب المحاضرات بناء على السنة والمادة
+                    const { data } = await supabase.from('lectures')
+                        .select('*')
+                        .eq('year', selectedYear.value)
+                        .eq('subject_type', selectedSubject.value);
+                    lectures.value = data || [];
+                };
+
+                const fetchUnlockedLectures = async () => {
+                    const { data } = await supabase.from('student_lectures').select('lecture_id').eq('student_id', user.value.id);
+                    unlockedLecturesIds.value = data ? data.map(item => item.lecture_id) : [];
+                };
+
+                const isLecUnlocked = (id) => unlockedLecturesIds.value.includes(id);
+
+                const unlockLecture = async (lectureId) => {
+                    const inputCode = document.getElementById('code-' + lectureId).value;
+                    if (!inputCode) return alert('اكتب الكود الأول يا بطل!');
+
+                    // التحقق من صلاحية الكود في الداتابيز
+                    const { data: codeData, error } = await supabase.from('access_codes')
+                        .select('*')
+                        .eq('code', inputCode)
+                        .eq('lecture_id', lectureId)
+                        .eq('is_used', false)
+                        .single();
+
+                    if (error || !codeData) {
+                        return alert('الكود ده غلط أو مستخدم قبل كده! كلم رحوم أو المساعدين تجيب كود جديد.');
+                    }
+
+                    // تحديث الكود لـ مستخدم وربطه بالطالب
+                    await supabase.from('access_codes').update({ is_used: true, used_by: user.value.id }).eq('code', inputCode);
+                    // إضافة المحاضرة للمحاضرات المفتوحة للطالب
+                    await supabase.from('student_lectures').insert({ student_id: user.value.id, lecture_id: lectureId });
+
+                    alert('مبروك! المحاضرة اتفتحت، بالتوفيق يا بطل 🚀');
+                    fetchUnlockedLectures();
+                };
+
+                const openLecture = (lec) => {
+                    currentLecture.value = lec;
+                    screen.value = 'view-lecture';
+                };
+
+                const getYoutubeId = (url) => {
+                    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+                    const match = url.match(regExp);
+                    return (match && match[2].length === 11) ? match[2] : null;
+                };
+
+                return {
+                    screen, isLogin, user, profile, selectedYear, selectedSubject, authForm, lectures, currentLecture,
+                    login, register, logout, getYearName, selectYear, selectSubject, isLecUnlocked, unlockLecture, openLecture, getYoutubeId
+                };
             }
-
-            // محاكاة تحميل السيرفر (2 ثانية تأخير كما في الـ Flutter code المرفق)
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري التحقق...';
-            btn.disabled = true;
-
-            setTimeout(() => {
-                btn.innerHTML = 'تفعيل الاشتراك';
-                btn.disabled = false;
-
-                if (codeInput.toUpperCase() === 'RAHMA2025') {
-                    feedback.className = "feedback-msg success";
-                    feedback.innerHTML = "✓ تم تفعيل الاشتراك بنجاح! أهلاً بك في منصة الأحياء";
-                } else {
-                    feedback.className = "feedback-msg error";
-                    feedback.innerHTML = "✗ كود غير صحيح. يرجى المراجعة والمحاولة مجدداً";
-                }
-            }, 1500);
-        }
+        }).mount('#app');
     </script>
 </body>
 </html>
