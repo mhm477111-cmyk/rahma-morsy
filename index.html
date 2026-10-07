@@ -160,7 +160,7 @@ function drawStu() {
     <button class="btn sm g" onclick="stuDev('${x.id}')">فك الجهاز</button>
     <button class="btn sm g" onclick="stuCourses('${x.id}')">المواد</button>
     <button class="btn sm g" onclick="stuEdit('${x.id}')">تعديل</button>
-    <button class="btn sm er" onclick="stuDel('${x.id}')">حذف</button></td></tr>`).join('') || `<tr><td colspan="7">لا يوجد طلبة</td></tr>`;
+    </td></tr>`).join('') || `<tr><td colspan="7">لا يوجد طلبة</td></tr>`;
 }
 const stu = id => STU.find(x => x.id === id);
 async function stuToggle(id) { const s = stu(id); if (await run(sb.from('profiles').update({ is_active: !s.is_active }).eq('id', id), s.is_active ? 'تم إيقاف الحساب' : 'تم تفعيل الحساب')) { s.is_active = !s.is_active; drawStu(); } }
