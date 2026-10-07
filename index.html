@@ -160,7 +160,8 @@ function drawStu() {
     <button class="btn sm g" onclick="stuDev('${x.id}')">فك الجهاز</button>
     <button class="btn sm g" onclick="stuCourses('${x.id}')">المواد</button>
     <button class="btn sm g" onclick="stuEdit('${x.id}')">تعديل</button>
-    </td></tr>`).join('') || `<tr><td colspan="7">لا يوجد طلبة</td></tr>`;
+    <button class="btn sm g" onclick="stuPass('${x.id}')">باسورد</button>
+    <button class="btn sm er" onclick="stuDel('${x.id}')">حذف</button></td></tr>`).join('') || `<tr><td colspan="7">لا يوجد طلبة</td></tr>`;
 }
 const stu = id => STU.find(x => x.id === id);
 async function stuToggle(id) { const s = stu(id); if (await run(sb.from('profiles').update({ is_active: !s.is_active }).eq('id', id), s.is_active ? 'تم إيقاف الحساب' : 'تم تفعيل الحساب')) { s.is_active = !s.is_active; drawStu(); } }
@@ -172,9 +173,12 @@ function stuEdit(id) {
   });
 }
 async function stuDel(id) {
-  if (!confirm('حذف بيانات الطالب نهائياً؟ (الأفضل تعمل "إيقاف" بدل الحذف)')) return;
-  await sb.from('student_courses').delete().eq('student_id', id); await sb.from('student_lectures').delete().eq('student_id', id);
-  if (await run(sb.from('profiles').delete().eq('id', id), 'تم الحذف')) { STU = STU.filter(x => x.id !== id); drawStu(); }
+  if (!confirm('حذف حساب الطالب نهائياً (الدخول + البيانات + المواد)؟ مينفعش يترجع.\nلو عايز توقفه بس، استخدم "إيقاف".')) return;
+  if (await run(sb.rpc('admin_delete_user', { uid: id }), 'تم حذف الحساب نهائياً')) { STU = STU.filter(x => x.id !== id); drawStu(); }
+}
+async function stuPass(id) {
+  const p = prompt('اكتب كلمة المرور الجديدة للطالب (6 أحرف على الأقل):');
+  if (p) await run(sb.rpc('admin_set_password', { uid: id, new_password: p.trim() }), 'تم تغيير كلمة المرور');
 }
 async function stuCourses(id) {
   const [cs, mine] = await Promise.all([run(sb.from('courses').select('*').order('created_at', { ascending: false })), run(sb.from('student_courses').select('course_id').eq('student_id', id))]);
