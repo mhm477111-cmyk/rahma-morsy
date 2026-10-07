@@ -107,7 +107,7 @@ async function login() {
   const phone = $('#ph').value.trim(), pw = $('#pw').value.trim();
   if (phone.length !== 11 || !pw) return toast('اكتب رقم التليفون (11 رقم) وكلمة المرور', true);
   const { data, error } = await sb.auth.signInWithPassword({ email: `${phone}@rahoum.com`, password: pw });
-  if (error) return toast('بيانات الدخول غلط', true);
+  if (error) return toast('فشل الدخول: ' + error.message, true);
   await boot(data.user);
 }
 async function boot(user) {
