@@ -180,7 +180,12 @@ function stuEdit(id) {
 }
 async function stuDel(id) {
   if (!confirm('حذف حساب الطالب نهائياً (الدخول + البيانات + المواد)؟ مينفعش يترجع.\nلو عايز توقفه بس، استخدم "إيقاف".')) return;
-  if (await run(sb.rpc('admin_delete_user', { uid: id }), 'تم حذف الحساب نهائياً')) { STU = STU.filter(x => x.id !== id); drawStu(); }
+  // 1) نطلّع الطالب من جهازه الحالي فوراً (التطبيق بيعمل تسجيل خروج لما device_id يتغير)
+  if (!(await run(sb.from('profiles').update({ device_id: '__deleted__' }).eq('id', id)))) return;
+  toast('جاري تسجيل خروج الطالب...');
+  await new Promise(r => setTimeout(r, 3000));
+  // 2) نحذف الحساب نهائياً
+  if (await run(sb.rpc('admin_delete_user', { uid: id }), 'تم تسجيل خروج الطالب وحذف حسابه نهائياً')) { STU = STU.filter(x => x.id !== id); drawStu(); }
 }
 async function stuPass(id) {
   const p = prompt('اكتب كلمة المرور الجديدة للطالب (6 أحرف على الأقل):');
