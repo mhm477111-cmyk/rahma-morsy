@@ -157,7 +157,7 @@ function drawStu() {
     <td><span class="tag ${x.is_active ? 'ok' : 'no'}">${x.is_active ? 'مفعّل' : 'موقوف/انتظار'}</span></td>
     <td>${x.device_id ? '📱 مربوط' : '—'}</td>
     <td><button class="btn sm ${x.is_active ? 'w' : 'ok'}" onclick="stuToggle('${x.id}')">${x.is_active ? 'إيقاف' : 'تفعيل'}</button>
-    <button class="btn sm g" onclick="stuDev('${x.id}')">فك الجهاز</button>
+    <button class="btn sm g" onclick="stuDev('${x.id}')">خروج وفك الجهاز</button>
     <button class="btn sm g" onclick="stuCourses('${x.id}')">المواد</button>
     <button class="btn sm g" onclick="stuEdit('${x.id}')">تعديل</button>
     <button class="btn sm g" onclick="stuPass('${x.id}')">باسورد</button>
@@ -165,7 +165,13 @@ function drawStu() {
 }
 const stu = id => STU.find(x => x.id === id);
 async function stuToggle(id) { const s = stu(id); if (await run(sb.from('profiles').update({ is_active: !s.is_active }).eq('id', id), s.is_active ? 'تم إيقاف الحساب' : 'تم تفعيل الحساب')) { s.is_active = !s.is_active; drawStu(); } }
-async function stuDev(id) { if (confirm('فك ارتباط الحساب بالجهاز الحالي؟ الطالب هيقدر يسجّل من جهاز جديد.') && await run(sb.from('profiles').update({ device_id: null }).eq('id', id), 'تم فك الجهاز')) { stu(id).device_id = null; drawStu(); } }
+async function stuDev(id) {
+  if (!confirm('هيتعمل تسجيل خروج للطالب من جهازه الحالي، وبعدها يقدر يسجّل من جهاز جديد. متأكد؟')) return;
+  if (!(await run(sb.rpc('admin_reset_device', { uid: id })))) return;
+  toast('جاري تسجيل الخروج من الجهاز القديم...');
+  await new Promise(r => setTimeout(r, 3000)); // وقت كفاية إن الجهاز القديم يستلم الأمر ويطلع
+  if (await run(sb.from('profiles').update({ device_id: null }).eq('id', id), 'تم تسجيل خروج الطالب وفك الجهاز')) { stu(id).device_id = null; drawStu(); }
+}
 function stuEdit(id) {
   const s = stu(id);
   openForm('تعديل بيانات الطالب', [{ k: 'full_name', l: 'الاسم' }, { k: 'year', l: 'الفرقة', t: 'select', o: YEARS }, { k: 'division', l: 'الشعبة', t: 'select', o: DIVS }], s, async o => {
