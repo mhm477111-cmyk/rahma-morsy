@@ -1,313 +1,291 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة رحوم - مواد البايو والجيو</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body { font-family: 'Cairo', sans-serif; user-select: none; }
-        .watermark {
-            position: absolute; pointer-events: none; color: rgba(220, 38, 38, 0.25);
-            font-weight: bold; font-size: 1.5rem; z-index: 9999; animation: moveWatermark 10s linear infinite alternate;
-        }
-        @keyframes moveWatermark {
-            0% { top: 10%; left: 10%; }
-            100% { top: 80%; left: 70%; }
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>لوحة تحكم منصة د. رحمة مرسي</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+:root{--bg:#0a0d18;--s:#111527;--e:#181d30;--p:#8b7fff;--p2:#6a5ed4;--t:#f0eeff;--t2:#9a90c8;--ok:#6fe8c4;--w:#ffca6b;--er:#ff7b6b;--bd:#262b45}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font-family:Cairo,system-ui,sans-serif}
+button,input,select,textarea{font-family:inherit;font-size:14px}
+input,select,textarea{width:100%;background:var(--e);border:1px solid var(--bd);color:var(--t);padding:10px 12px;border-radius:10px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--p)}
+.btn{background:var(--p2);color:#fff;border:0;border-radius:9px;padding:8px 14px;cursor:pointer;font-weight:600}
+.btn:hover{background:var(--p)}.btn.g{background:var(--e);border:1px solid var(--bd);color:var(--t2)}
+.btn.ok{background:#1f6b57}.btn.w{background:#7a5a14}.btn.er{background:#8a3328}.btn.sm{padding:4px 9px;font-size:12px}
+#login{max-width:360px;margin:12vh auto;padding:28px;background:var(--s);border-radius:18px;border:1px solid var(--bd)}
+#login h1{margin:0 0 18px;font-size:20px}#login input{margin-bottom:12px}
+#app{display:none;min-height:100vh}
+nav{position:fixed;inset:0 0 0 auto;width:210px;background:var(--s);border-left:1px solid var(--bd);padding:16px 10px;display:flex;flex-direction:column;gap:4px}
+nav h2{font-size:15px;margin:4px 8px 14px;color:var(--p)}
+nav a{padding:10px 12px;border-radius:10px;cursor:pointer;color:var(--t2);font-weight:600}
+nav a.on,nav a:hover{background:var(--e);color:var(--t)}
+main{margin-right:210px;padding:24px}
+h3{margin:0 0 16px}.bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center}.bar input,.bar select{width:auto;min-width:160px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.card{background:var(--s);border:1px solid var(--bd);border-radius:14px;padding:16px}.card b{font-size:28px;color:var(--p);display:block}
+.tw{overflow-x:auto;background:var(--s);border:1px solid var(--bd);border-radius:14px}
+table{width:100%;border-collapse:collapse;min-width:640px}th,td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--bd);font-size:13px}
+th{color:var(--t2)}td .btn{margin:2px}
+.tag{padding:2px 9px;border-radius:20px;font-size:12px}.tag.ok{background:#12372d;color:var(--ok)}.tag.no{background:#3a2412;color:var(--w)}.tag.x{background:#3a1a16;color:var(--er)}
+#mb{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;padding:14px;z-index:9}
+#md{background:var(--s);border:1px solid var(--bd);border-radius:16px;padding:20px;width:100%;max-width:460px;max-height:90vh;overflow:auto}
+#md label{display:block;margin:10px 0 4px;color:var(--t2);font-size:13px}
+#md .row{display:flex;gap:8px;margin-top:16px;justify-content:flex-start}
+.chk{display:flex;gap:8px;align-items:center;padding:6px 0}.chk input{width:auto}
+#toast{position:fixed;bottom:20px;left:20px;padding:12px 18px;border-radius:12px;background:var(--ok);color:#06241b;font-weight:700;display:none;z-index:99}
+@media(max-width:760px){nav{position:static;width:auto;flex-direction:row;overflow-x:auto;border:0}nav h2{display:none}nav a{white-space:nowrap}main{margin:0;padding:14px}}
+</style>
 </head>
-<body class="bg-pink-50 text-gray-800" oncontextmenu="return false;">
+<body>
+<div id="login">
+  <h1>🎓 لوحة تحكم المنصة</h1>
+  <input id="ph" placeholder="رقم تليفون الأدمن" inputmode="numeric" maxlength="11">
+  <input id="pw" type="password" placeholder="كلمة المرور">
+  <button class="btn" style="width:100%;padding:11px" onclick="login()">دخول</button>
+</div>
 
-    <div id="app" class="min-h-screen flex flex-col">
-        <header class="bg-gradient-to-r from-pink-500 to-purple-600 text-white p-4 shadow-md flex justify-between items-center">
-            <h1 class="text-2xl font-bold tracking-wide cursor-pointer" @click="screen = 'home'">🌸 عيلة رحوم للـ Bio & Geo</h1>
-            <div v-if="user" class="flex items-center gap-4">
-                <span class="bg-white/20 px-3 py-1 rounded-full text-sm">أهلاً يا {{ profile?.full_name || 'بطل' }}</span>
-                <button @click="logout" class="text-sm bg-red-500 hover:bg-red-600 px-3 py-1 rounded">خروج</button>
-            </div>
-        </header>
+<div id="app">
+  <nav id="nav"></nav>
+  <main id="main"></main>
+</div>
+<div id="mb"><div id="md"></div></div>
+<div id="toast"></div>
 
-        <main class="flex-1 p-6 max-w-6xl mx-auto w-full">
-            
-            <div v-if="!user" class="max-w-md mx-auto bg-white p-8 rounded-2xl shadow-xl mt-10">
-                <div class="text-center mb-6">
-                    <h2 class="text-2xl font-bold text-purple-700">{{ isLogin ? 'جاهز للمذاكرة مع رحوم؟' : 'انضم لعيلة رحوم' }}</h2>
-                    <p class="text-gray-500 text-sm mt-1">طريقك للتقفيل في البايو والجيو يبدأ هنا!</p>
-                </div>
-                
-                <form @submit.prevent="isLogin ? login() : register()" class="space-y-4">
-                    <div v-if="!isLogin">
-                        <label class="block text-sm font-semibold mb-1">الاسم بالكامل</label>
-                        <input type="text" v-model="authForm.name" required class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-pink-400 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-1">البريد الإلكتروني</label>
-                        <input type="email" v-model="authForm.email" required class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-pink-400 outline-none">
-                    </div>
-                    <div v-if="!isLogin">
-                        <label class="block text-sm font-semibold mb-1">رقم التليفون</label>
-                        <input type="tel" v-model="authForm.phone" required class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-pink-400 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-1">كلمة المرور</label>
-                        <input type="password" v-model="authForm.password" required class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-pink-400 outline-none">
-                    </div>
-                    
-                    <button type="submit" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white p-3 rounded-lg font-bold shadow-md hover:opacity-90">
-                        {{ isLogin ? 'تسجيل الدخول' : 'إنشاء حساب جديد' }}
-                    </button>
-                </form>
-                
-                <div class="text-center mt-4">
-                    <button @click="isLogin = !isLogin" class="text-purple-600 hover:underline text-sm">
-                        {{ isLogin ? 'معندكش حساب؟ سجل هنا' : 'عندك حساب بالفعل؟ ادخل من هنا' }}
-                    </button>
-                </div>
-            </div>
+<script>
+// ───── الإعدادات (نفس بيانات تطبيقك — المفتاح publishable ومسموح يتحط هنا) ─────
+const SB_URL = 'https://ztjzmmjgddddogvbgdfw.supabase.co';
+const SB_KEY = 'sb_publishable_AQCydKXBQ1tDUn7Ip6_IVw_Y7FqqJDN';
+const BUCKET = 'lecture-files'; // لرفع ملفات PDF (اختياري، اتعمل في ملف SQL)
+const sb = supabase.createClient(SB_URL, SB_KEY);
 
-            <div v-if="user && profile && !profile.is_active" class="text-center max-w-md mx-auto bg-white p-8 rounded-2xl shadow-xl mt-10">
-                <i class="fas fa-hourglass-half text-6xl text-amber-500 mb-4 animate-pulse"></i>
-                <h2 class="text-2xl font-bold text-gray-700">حسابك قيد التفعيل!</h2>
-                <p class="text-gray-500 mt-2">منورنا يا بطل! رحوم بتراجع البيانات وهتفعلك الحساب فوراً. تواصل مع الدعم لتسريع العملية.</p>
-            </div>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const YEARS = [[1,'الفرقة الأولى'],[2,'الفرقة الثانية'],[3,'الفرقة الثالثة']];
+const DIVS = [['عام','عام'],['أساسي','أساسي']];
+const DEPTS = [['','— بدون —'],['كيمياء','كيمياء'],['فيزياء','فيزياء'],['بايو','بايولوجي']];
+const SUBJ = [['بايو','بايولوجي'],['جيو','جيولوجيا']];
+const yName = y => (YEARS.find(x => x[0] == y) || [0,'—'])[1];
 
-            <div v-if="user && profile?.is_active">
-                
-                <div v-if="screen === 'home'">
-                    <h2 class="text-2xl font-bold text-purple-800 mb-6 text-center">اختار فرقتك الدراسية يا بطل 🎓</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                        <div v-for="year in [1, 2, 3, 4]" :key="year" @click="selectYear(year)" 
-                             class="bg-white p-8 rounded-2xl shadow-md border-2 border-transparent hover:border-pink-400 cursor-pointer text-center transition-all transform hover:-translate-y-2">
-                            <div class="text-4xl mb-3">⭐</div>
-                            <h3 class="text-xl font-bold text-gray-700">الفرقة {{ getYearName(year) }}</h3>
-                            <p class="text-gray-400 text-sm mt-1">مقررات البايو والجيو</p>
-                        </div>
-                    </div>
-                </div>
+function toast(m, bad) {
+  const t = $('#toast'); t.textContent = m; t.style.background = bad ? 'var(--er)' : 'var(--ok)';
+  t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 2600);
+}
+async function run(p, okMsg) { // تنفيذ طلب وعرض النتيجة
+  const { data, error } = await p;
+  if (error) { toast(error.message, true); return null; }
+  if (okMsg) toast(okMsg);
+  return data ?? true;
+}
 
-                <div v-if="screen === 'courses'">
-                    <button @click="screen = 'home'" class="mb-4 text-purple-600 font-bold"><i class="fas fa-arrow-right"></i> كل الفرق</button>
-                    <h2 class="text-2xl font-bold text-purple-800 mb-6">الفرقة {{ getYearName(selectedYear) }} - اختر المقرر ✨</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div @click="selectSubject('bio')" class="bg-gradient-to-br from-green-400 to-emerald-600 text-white p-8 rounded-2xl shadow-lg cursor-pointer text-center">
-                            <i class="fas fa-dna text-5xl mb-3"></i>
-                            <h3 class="text-2xl font-bold">علم الأحياء (Biology)</h3>
-                        </div>
-                        <div @click="selectSubject('geo')" class="bg-gradient-to-br from-amber-400 to-orange-600 text-white p-8 rounded-2xl shadow-lg cursor-pointer text-center">
-                            <i class="fas fa-globe-americas text-5xl mb-3"></i>
-                            <h3 class="text-2xl font-bold">جيولوجيا (Geology)</h3>
-                        </div>
-                    </div>
-                </div>
+// ───── نافذة نموذج عامة ─────
+function openForm(title, fields, vals, onSave) {
+  vals = vals || {};
+  const f = fields.map(x => {
+    const v = vals[x.k] ?? '';
+    let inp;
+    if (x.t === 'select') inp = `<select name="${x.k}">${x.o.map(o => `<option value="${esc(o[0])}" ${String(o[0]) === String(v) ? 'selected' : ''}>${esc(o[1])}</option>`).join('')}</select>`;
+    else if (x.t === 'textarea') inp = `<textarea name="${x.k}" rows="4">${esc(v)}</textarea>`;
+    else if (x.t === 'file') inp = `<input type="file" name="${x.k}" accept="application/pdf">`;
+    else inp = `<input name="${x.k}" value="${esc(v)}" ${x.t ? `type="${x.t}"` : ''} ${x.ph ? `placeholder="${esc(x.ph)}"` : ''}>`;
+    return `<label>${x.l}</label>${inp}`;
+  }).join('');
+  $('#md').innerHTML = `<h3>${title}</h3><form id="fm">${f}<div class="row"><button class="btn" type="submit">حفظ</button><button class="btn g" type="button" onclick="closeM()">إلغاء</button></div></form>`;
+  $('#mb').style.display = 'flex';
+  $('#fm').onsubmit = async e => {
+    e.preventDefault();
+    const o = {}; new FormData(e.target).forEach((v, k) => o[k] = v);
+    await onSave(o); 
+  };
+}
+function closeM() { $('#mb').style.display = 'none'; }
 
-                <div v-if="screen === 'lectures'">
-                    <button @click="screen = 'courses'" class="mb-4 text-purple-600 font-bold"><i class="fas fa-arrow-right"></i> تغيير المقرر</button>
-                    <h2 class="text-2xl font-bold text-purple-800 mb-6">المحاضرات المتاحة ليك 🎯</h2>
-                    
-                    <div v-if="lectures.length === 0" class="text-gray-500 text-center py-10 bg-white rounded-xl">مفيش محاضرات نزلت هنا لسه، رحوم هترفعها قريب!</div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div v-for="lec in lectures" :key="lec.id" class="bg-white p-5 rounded-xl shadow-md border flex flex-col justify-between">
-                            <div>
-                                <h3 class="font-bold text-lg text-gray-800 mb-2">📌 {{ lec.title }}</h3>
-                                <p class="text-xs text-gray-400 mb-4">تاريخ الرفع: {{ new Date(lec.created_at).toLocaleDateString('ar-EG') }}</p>
-                            </div>
-                            
-                            <div v-if="isLecUnlocked(lec.id)">
-                                <button @click="openLecture(lec)" class="w-full bg-purple-600 text-white py-2 rounded-lg font-bold hover:bg-purple-700">
-                                    <i class="fas fa-play-circle ml-1"></i> دخول المحاضرة
-                                </button>
-                            </div>
-                            <div v-else class="space-y-2">
-                                <p class="text-xs text-red-500 font-semibold"><i class="fas fa-lock text-xs"></i> المحاضرة مقفولة، محتاجة كود تفعيل</p>
-                                <div class="flex gap-2">
-                                    <input type="text" :id="'code-'+lec.id" placeholder="دخل كود فك التشفير" class="border p-2 rounded-lg text-sm flex-1 outline-none">
-                                    <button @click="unlockLecture(lec.id)" class="bg-pink-500 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-pink-600">تفعيل</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+// ───── الدخول ─────
+async function login() {
+  const phone = $('#ph').value.trim(), pw = $('#pw').value.trim();
+  if (phone.length !== 11 || !pw) return toast('اكتب رقم التليفون (11 رقم) وكلمة المرور', true);
+  const { data, error } = await sb.auth.signInWithPassword({ email: `${phone}@rahoum.com`, password: pw });
+  if (error) return toast('بيانات الدخول غلط', true);
+  await boot(data.user);
+}
+async function boot(user) {
+  const { data: p } = await sb.from('profiles').select('role').eq('id', user.id).single();
+  if (!p || p.role !== 'admin') { await sb.auth.signOut(); return toast('الحساب ده مش أدمن', true); }
+  $('#login').style.display = 'none'; $('#app').style.display = 'block';
+  go('stats');
+}
+async function logout() { await sb.auth.signOut(); location.reload(); }
+sb.auth.getSession().then(({ data }) => data.session && boot(data.session.user));
 
-                <div v-if="screen === 'view-lecture' && currentLecture" class="space-y-6">
-                    <button @click="screen = 'lectures'" class="text-purple-600 font-bold"><i class="fas fa-arrow-right"></i> رجوع للمحاضرات</button>
-                    <h2 class="text-2xl font-bold text-purple-800">{{ currentLecture.title }}</h2>
-                    
-                    <div class="relative bg-black rounded-2xl overflow-hidden aspect-video shadow-2xl">
-                        <div class="watermark">{{ profile.full_name }} - {{ profile.phone }}</div>
-                        <iframe class="w-full h-full" :src="'https://www.youtube.com/embed/' + getYoutubeId(currentLecture.youtube_url) + '?rel=0&modestbranding=1'" frameborder="0" allowfullscreen></iframe>
-                    </div>
+// ───── التنقل ─────
+const TABS = [['stats','📊 الإحصائيات'],['students','👩‍🎓 الطلبة'],['courses','📚 المواد'],['lectures','🎬 المحاضرات'],['codes','🔑 أكواد التفعيل'],['ann','📢 الإشعارات']];
+function go(t) {
+  $('#nav').innerHTML = `<h2>لوحة التحكم</h2>` + TABS.map(x => `<a class="${x[0] === t ? 'on' : ''}" onclick="go('${x[0]}')">${x[1]}</a>`).join('') + `<a onclick="logout()" style="margin-top:auto">🚪 خروج</a>`;
+  ({ stats: vStats, students: vStudents, courses: vCourses, lectures: vLectures, codes: vCodes, ann: vAnn })[t]();
+}
+const main = h => $('#main').innerHTML = h;
 
-                    <div v-if="currentLecture.pdf_url" class="bg-white p-6 rounded-xl shadow-md">
-                        <h3 class="font-bold text-lg mb-3 text-purple-700"><i class="fas fa-file-pdf ml-2"></i> المذكرة المرفقة مع المحاضرة</h3>
-                        <p class="text-sm text-gray-500 mb-4">المذكرة محمية بعلامة مائية باسمك ورقمك، ممنوع التداول للحفاظ على مجهود رحوم.</p>
-                        <div class="relative border-4 border-dashed border-gray-200 rounded-xl p-4 text-center bg-gray-50">
-                            <div class="watermark text-red-600/30 font-bold text-sm absolute inset-0 flex items-center justify-center pointer-events-none text-center">
-                                {{ profile.full_name }} <br> {{ profile.phone }}
-                            </div>
-                            <a :href="currentLecture.pdf_url" target="_blank" class="inline-block bg-emerald-500 text-white px-6 py-3 rounded-xl font-bold shadow hover:bg-emerald-600">
-                                <i class="fas fa-external-link-alt ml-1"></i> فتح ملف الـ PDF بأمان
-                            </a>
-                        </div>
-                    </div>
-                </div>
+// ───── الإحصائيات ─────
+async function vStats() {
+  const cnt = async (t, f) => { let q = sb.from(t).select('*', { count: 'exact', head: true }); if (f) q = f(q); return (await q).count ?? 0; };
+  const [st, act, pen, co, le, cd, cu] = await Promise.all([
+    cnt('profiles', q => q.eq('role', 'student')), cnt('profiles', q => q.eq('role', 'student').eq('is_active', true)),
+    cnt('profiles', q => q.eq('role', 'student').eq('is_active', false)), cnt('courses'), cnt('lectures'),
+    cnt('access_codes'), cnt('access_codes', q => q.eq('is_used', true))]);
+  const c = (n, l) => `<div class="card"><b>${n}</b>${l}</div>`;
+  main(`<h3>نظرة عامة</h3><div class="cards">${c(st,'إجمالي الطلبة')}${c(act,'حسابات مفعّلة')}${c(pen,'في انتظار التفعيل / موقوفة')}${c(co,'مواد')}${c(le,'محاضرات')}${c(cd,'أكواد')}${c(cu,'أكواد مستخدمة')}</div>`);
+}
 
-            </div>
-        </main>
+// ───── الطلبة ─────
+let STU = [];
+async function vStudents() {
+  const d = await run(sb.from('profiles').select('*').eq('role', 'student'));
+  STU = (d || []).sort((a, b) => String(a.full_name).localeCompare(String(b.full_name), 'ar'));
+  main(`<h3>الطلبة</h3><div class="bar"><input id="q" placeholder="بحث بالاسم أو التليفون" oninput="drawStu()">
+    <select id="fs" onchange="drawStu()"><option value="">كل الحالات</option><option value="p">في الانتظار / موقوف</option><option value="a">مفعّل</option></select>
+    <select id="fy" onchange="drawStu()"><option value="">كل الفرق</option>${YEARS.map(y => `<option value="${y[0]}">${y[1]}</option>`).join('')}</select>
+    <span id="cn" style="color:var(--t2)"></span></div><div class="tw"><table><thead><tr><th>الاسم</th><th>التليفون</th><th>الفرقة</th><th>الشعبة</th><th>الحالة</th><th>الجهاز</th><th>إجراءات</th></tr></thead><tbody id="tb"></tbody></table></div>`);
+  drawStu();
+}
+function drawStu() {
+  const q = $('#q').value.trim(), s = $('#fs').value, y = $('#fy').value;
+  const L = STU.filter(x => (!q || (x.full_name || '').includes(q) || (x.phone || '').includes(q)) && (!s || (s === 'a') === !!x.is_active) && (!y || x.year == y));
+  $('#cn').textContent = L.length + ' طالب';
+  $('#tb').innerHTML = L.map(x => `<tr><td>${esc(x.full_name)}</td><td>${esc(x.phone)}</td><td>${yName(x.year)}</td><td>${esc(x.division)}</td>
+    <td><span class="tag ${x.is_active ? 'ok' : 'no'}">${x.is_active ? 'مفعّل' : 'موقوف/انتظار'}</span></td>
+    <td>${x.device_id ? '📱 مربوط' : '—'}</td>
+    <td><button class="btn sm ${x.is_active ? 'w' : 'ok'}" onclick="stuToggle('${x.id}')">${x.is_active ? 'إيقاف' : 'تفعيل'}</button>
+    <button class="btn sm g" onclick="stuDev('${x.id}')">فك الجهاز</button>
+    <button class="btn sm g" onclick="stuCourses('${x.id}')">المواد</button>
+    <button class="btn sm g" onclick="stuEdit('${x.id}')">تعديل</button>
+    <button class="btn sm er" onclick="stuDel('${x.id}')">حذف</button></td></tr>`).join('') || `<tr><td colspan="7">لا يوجد طلبة</td></tr>`;
+}
+const stu = id => STU.find(x => x.id === id);
+async function stuToggle(id) { const s = stu(id); if (await run(sb.from('profiles').update({ is_active: !s.is_active }).eq('id', id), s.is_active ? 'تم إيقاف الحساب' : 'تم تفعيل الحساب')) { s.is_active = !s.is_active; drawStu(); } }
+async function stuDev(id) { if (confirm('فك ارتباط الحساب بالجهاز الحالي؟ الطالب هيقدر يسجّل من جهاز جديد.') && await run(sb.from('profiles').update({ device_id: null }).eq('id', id), 'تم فك الجهاز')) { stu(id).device_id = null; drawStu(); } }
+function stuEdit(id) {
+  const s = stu(id);
+  openForm('تعديل بيانات الطالب', [{ k: 'full_name', l: 'الاسم' }, { k: 'year', l: 'الفرقة', t: 'select', o: YEARS }, { k: 'division', l: 'الشعبة', t: 'select', o: DIVS }], s, async o => {
+    o.year = +o.year; if (await run(sb.from('profiles').update(o).eq('id', id), 'تم الحفظ')) { Object.assign(s, o); closeM(); drawStu(); }
+  });
+}
+async function stuDel(id) {
+  if (!confirm('حذف بيانات الطالب نهائياً؟ (الأفضل تعمل "إيقاف" بدل الحذف)')) return;
+  await sb.from('student_courses').delete().eq('student_id', id); await sb.from('student_lectures').delete().eq('student_id', id);
+  if (await run(sb.from('profiles').delete().eq('id', id), 'تم الحذف')) { STU = STU.filter(x => x.id !== id); drawStu(); }
+}
+async function stuCourses(id) {
+  const [cs, mine] = await Promise.all([run(sb.from('courses').select('*').order('created_at', { ascending: false })), run(sb.from('student_courses').select('course_id').eq('student_id', id))]);
+  const own = new Set((mine || []).map(x => String(x.course_id)));
+  $('#md').innerHTML = `<h3>مواد ${esc(stu(id).full_name)}</h3>` + ((cs || []).map(c => `<label class="chk"><input type="checkbox" ${own.has(String(c.id)) ? 'checked' : ''} onchange="stuCourseSet('${id}','${c.id}',this.checked)"> ${esc(c.name_ar)} <small style="color:var(--t2)">(${yName(c.year)} - ${esc(c.division)})</small></label>`).join('') || 'لا توجد مواد') + `<div class="row"><button class="btn g" onclick="closeM()">إغلاق</button></div>`;
+  $('#mb').style.display = 'flex';
+}
+async function stuCourseSet(sid, cid, on) {
+  on ? await run(sb.from('student_courses').insert({ student_id: sid, course_id: cid }), 'تم فتح المادة للطالب')
+     : await run(sb.from('student_courses').delete().eq('student_id', sid).eq('course_id', cid), 'تم سحب المادة');
+}
 
-        <footer class="text-center p-4 text-xs text-gray-400 bg-white border-t">
-            كل الحقوق محفوظة لـ د/ رحمة مرسي (رحوم) © 2026 - برمجة وإشراف Mocontrol.online
-        </footer>
-    </div>
+// ───── المواد ─────
+let CRS = [];
+const crsFields = [{ k: 'name_ar', l: 'اسم المادة (عربي)' }, { k: 'name_en', l: 'اسم المادة (إنجليزي)' }, { k: 'year', l: 'الفرقة', t: 'select', o: YEARS },
+  { k: 'division', l: 'الشعبة', t: 'select', o: DIVS }, { k: 'department', l: 'القسم (للشعبة العامة فقط)', t: 'select', o: DEPTS }, { k: 'subject_type', l: 'التخصص', t: 'select', o: SUBJ }];
+async function loadCourses() { CRS = (await run(sb.from('courses').select('*').order('created_at', { ascending: false }))) || []; }
+async function vCourses() {
+  await loadCourses();
+  main(`<h3>المواد</h3><div class="bar"><button class="btn" onclick="crsForm()">+ إضافة مادة</button></div><div class="tw"><table><thead><tr><th>المادة</th><th>الفرقة</th><th>الشعبة</th><th>القسم</th><th>التخصص</th><th></th></tr></thead><tbody>` +
+    (CRS.map(c => `<tr><td>${esc(c.name_ar)}<br><small style="color:var(--t2)">${esc(c.name_en)}</small></td><td>${yName(c.year)}</td><td>${esc(c.division)}</td><td>${esc(c.department) || '—'}</td><td>${esc(c.subject_type)}</td>
+    <td><button class="btn sm g" onclick="crsForm('${c.id}')">تعديل</button><button class="btn sm er" onclick="crsDel('${c.id}')">حذف</button></td></tr>`).join('') || '<tr><td colspan="6">لا توجد مواد</td></tr>') + `</tbody></table></div>`);
+}
+function crsForm(id) {
+  const c = CRS.find(x => String(x.id) === String(id));
+  openForm(c ? 'تعديل مادة' : 'إضافة مادة', crsFields, c || {}, async o => {
+    o.year = +o.year; o.department = o.division === 'عام' ? (o.department || null) : null;
+    if (await run(c ? sb.from('courses').update(o).eq('id', c.id) : sb.from('courses').insert(o), 'تم الحفظ')) { closeM(); vCourses(); }
+  });
+}
+async function crsDel(id) {
+  if (!confirm('حذف المادة؟ هيتحذف معاها كل محاضراتها وأكوادها.')) return;
+  await sb.from('lectures').delete().eq('course_id', id); await sb.from('access_codes').delete().eq('course_id', id); await sb.from('student_courses').delete().eq('course_id', id);
+  if (await run(sb.from('courses').delete().eq('id', id), 'تم الحذف')) vCourses();
+}
 
-    <script>
-        const { createApp, ref, onMounted } = Vue;
+// ───── المحاضرات ─────
+let CUR = '';
+async function vLectures() {
+  await loadCourses();
+  CUR = CUR || (CRS[0] ? String(CRS[0].id) : '');
+  main(`<h3>المحاضرات</h3><div class="bar"><select id="cs" onchange="CUR=this.value;drawLec()">${CRS.map(c => `<option value="${c.id}" ${String(c.id) === CUR ? 'selected' : ''}>${esc(c.name_ar)} — ${yName(c.year)}</option>`).join('')}</select>
+    <button class="btn" onclick="lecForm()">+ إضافة محاضرة</button></div><div class="tw"><table><thead><tr><th>العنوان</th><th>فيديو يوتيوب</th><th>PDF</th><th></th></tr></thead><tbody id="tb"></tbody></table></div>`);
+  drawLec();
+}
+let LEC = [];
+async function drawLec() {
+  if (!CUR) return $('#tb').innerHTML = '<tr><td colspan="4">أضف مادة الأول</td></tr>';
+  LEC = (await run(sb.from('lectures').select('*').eq('course_id', CUR).order('created_at', { ascending: false }))) || [];
+  $('#tb').innerHTML = LEC.map(l => `<tr><td>${esc(l.title)}</td><td>${l.youtube_url ? `<a style="color:var(--p)" target="_blank" href="${esc(l.youtube_url)}">رابط</a>` : '—'}</td><td>${l.pdf_url ? `<a style="color:var(--p)" target="_blank" href="${esc(l.pdf_url)}">فتح</a>` : '—'}</td>
+    <td><button class="btn sm g" onclick="lecForm('${l.id}')">تعديل</button><button class="btn sm er" onclick="lecDel('${l.id}')">حذف</button></td></tr>`).join('') || '<tr><td colspan="4">لا توجد محاضرات</td></tr>';
+}
+function lecForm(id) {
+  const l = LEC.find(x => String(x.id) === String(id));
+  openForm(l ? 'تعديل محاضرة' : 'إضافة محاضرة', [{ k: 'title', l: 'عنوان المحاضرة' }, { k: 'youtube_url', l: 'رابط يوتيوب', ph: 'https://youtu.be/...' }, { k: 'pdf_url', l: 'رابط ملف PDF (اختياري)' }, { k: '_file', l: 'أو ارفع PDF مباشرة', t: 'file' }], l || {}, async o => {
+    const file = $('#fm [name=_file]').files[0]; delete o._file;
+    if (!o.title.trim()) return toast('اكتب عنوان المحاضرة', true);
+    if (file) {
+      const path = `${CUR}/${Date.now()}.pdf`;
+      const up = await sb.storage.from(BUCKET).upload(path, file, { contentType: 'application/pdf' });
+      if (up.error) return toast('فشل رفع الملف: ' + up.error.message, true);
+      o.pdf_url = sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+    }
+    o.pdf_url = o.pdf_url || null; o.youtube_url = o.youtube_url || null;
+    if (await run(l ? sb.from('lectures').update(o).eq('id', l.id) : sb.from('lectures').insert({ ...o, course_id: CUR }), 'تم الحفظ')) { closeM(); drawLec(); }
+  });
+}
+async function lecDel(id) { if (confirm('حذف المحاضرة؟') && await run(sb.from('lectures').delete().eq('id', id), 'تم الحذف')) drawLec(); }
 
-        // إعدادات سوبابيز (استبدلها ببياناتك الخاصة)
-        const SUPABASE_URL = "YOUR_SUPABASE_URL";
-        const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// ───── أكواد التفعيل ─────
+async function vCodes() {
+  await loadCourses();
+  CUR = CUR || (CRS[0] ? String(CRS[0].id) : '');
+  main(`<h3>أكواد تفعيل المواد</h3><div class="bar"><select id="cs" onchange="CUR=this.value;drawCodes()">${CRS.map(c => `<option value="${c.id}" ${String(c.id) === CUR ? 'selected' : ''}>${esc(c.name_ar)} — ${yName(c.year)}</option>`).join('')}</select>
+    <input id="n" type="number" min="1" max="500" value="10" style="width:90px"><button class="btn" onclick="genCodes()">توليد أكواد</button>
+    <button class="btn g" onclick="copyCodes()">نسخ غير المستخدم</button></div><div class="tw"><table><thead><tr><th>الكود</th><th>الحالة</th><th>استخدمه</th><th></th></tr></thead><tbody id="tb"></tbody></table></div>`);
+  drawCodes();
+}
+let CODES = [];
+async function drawCodes() {
+  if (!CUR) return $('#tb').innerHTML = '<tr><td colspan="4">أضف مادة الأول</td></tr>';
+  CODES = (await run(sb.from('access_codes').select('*').eq('course_id', CUR))) || [];
+  const ids = [...new Set(CODES.map(c => c.used_by).filter(Boolean))];
+  const names = {}; if (ids.length) ((await run(sb.from('profiles').select('id,full_name').in('id', ids))) || []).forEach(p => names[p.id] = p.full_name);
+  CODES.sort((a, b) => a.is_used - b.is_used);
+  $('#tb').innerHTML = CODES.map(c => `<tr><td style="font-family:monospace;letter-spacing:1px">${esc(c.code)}</td><td><span class="tag ${c.is_used ? 'x' : 'ok'}">${c.is_used ? 'مستخدم' : 'متاح'}</span></td><td>${esc(names[c.used_by]) || '—'}</td>
+    <td>${c.is_used ? '' : `<button class="btn sm er" onclick="codeDel('${esc(c.code)}')">حذف</button>`}</td></tr>`).join('') || '<tr><td colspan="4">لا توجد أكواد</td></tr>';
+}
+function rnd() { const ch = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', a = new Uint32Array(8); crypto.getRandomValues(a); return [...a].map(v => ch[v % ch.length]).join(''); }
+async function genCodes() {
+  const n = Math.min(500, Math.max(1, +$('#n').value || 1));
+  const rows = Array.from({ length: n }, () => ({ code: rnd(), course_id: CUR, is_used: false }));
+  if (await run(sb.from('access_codes').insert(rows), `تم توليد ${n} كود`)) drawCodes();
+}
+function copyCodes() { const t = CODES.filter(c => !c.is_used).map(c => c.code).join('\n'); navigator.clipboard.writeText(t).then(() => toast('تم نسخ الأكواد المتاحة')); }
+async function codeDel(code) { if (await run(sb.from('access_codes').delete().eq('code', code), 'تم الحذف')) drawCodes(); }
 
-        createApp({
-            setup() {
-                const screen = ref('home'); // home, courses, lectures, view-lecture
-                const isLogin = ref(true);
-                const user = ref(null);
-                const profile = ref(null);
-                const selectedYear = ref(null);
-                const selectedSubject = ref(null);
-                
-                const authForm = ref({ email: '', password: '', name: '', phone: '' });
-                const lectures = ref([]);
-                const unlockedLecturesIds = ref([]);
-                const currentLecture = ref(null);
-
-                onMounted(() => {
-                    // مراقبة جلسة المستخدم
-                    supabase.auth.onAuthStateChange((event, session) => {
-                        user.value = session?.user || null;
-                        if (user.value) {
-                            fetchProfile();
-                        }
-                    });
-                    
-                    // منع اختصارات الـ Screenshot الشهيرة
-                    document.addEventListener('keydown', (e) => {
-                        if (e.key === 'PrintScreen' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
-                            e.preventDefault();
-                            alert('ممنوع تصوير المحتوى يا بطل لحماية حقوق رحوم 🌸');
-                        }
-                    });
-                });
-
-                const fetchProfile = async () => {
-                    const { data } = await supabase.from('profiles').select('*').eq('id', user.value.id).single();
-                    profile.value = data;
-                    if (data && data.is_active) {
-                        fetchUnlockedLectures();
-                    }
-                };
-
-                const login = async () => {
-                    const { error } = await supabase.auth.signInWithPassword({
-                        email: authForm.value.email,
-                        password: authForm.value.password
-                    });
-                    if (error) alert(error.message);
-                };
-
-                const register = async () => {
-                    const { data, error } = await supabase.auth.signUp({
-                        email: authForm.value.email,
-                        password: authForm.value.password
-                    });
-                    if (error) return alert(error.message);
-
-                    if (data.user) {
-                        await supabase.from('profiles').insert({
-                            id: data.user.id,
-                            full_name: authForm.value.name,
-                            phone: authForm.value.phone,
-                            is_active: false
-                        });
-                        alert('حسابك اتعمل بنجاح! مستني تفعيل رحوم لحسابك خطوة بخطوة.');
-                        isLogin.value = true;
-                    }
-                };
-
-                const logout = () => supabase.auth.signOut();
-
-                const getYearName = (y) => ['الأولى', 'الثانية', 'الثالثة', 'الرابعة'][y-1];
-
-                const selectYear = (year) => {
-                    selectedYear.value = year;
-                    screen.value = 'courses';
-                };
-
-                const selectSubject = async (subject) => {
-                    selectedSubject.value = subject;
-                    screen.value = 'lectures';
-                    // جلب المحاضرات بناء على السنة والمادة
-                    const { data } = await supabase.from('lectures')
-                        .select('*')
-                        .eq('year', selectedYear.value)
-                        .eq('subject_type', selectedSubject.value);
-                    lectures.value = data || [];
-                };
-
-                const fetchUnlockedLectures = async () => {
-                    const { data } = await supabase.from('student_lectures').select('lecture_id').eq('student_id', user.value.id);
-                    unlockedLecturesIds.value = data ? data.map(item => item.lecture_id) : [];
-                };
-
-                const isLecUnlocked = (id) => unlockedLecturesIds.value.includes(id);
-
-                const unlockLecture = async (lectureId) => {
-                    const inputCode = document.getElementById('code-' + lectureId).value;
-                    if (!inputCode) return alert('اكتب الكود الأول يا بطل!');
-
-                    // التحقق من صلاحية الكود في الداتابيز
-                    const { data: codeData, error } = await supabase.from('access_codes')
-                        .select('*')
-                        .eq('code', inputCode)
-                        .eq('lecture_id', lectureId)
-                        .eq('is_used', false)
-                        .single();
-
-                    if (error || !codeData) {
-                        return alert('الكود ده غلط أو مستخدم قبل كده! كلم رحوم أو المساعدين تجيب كود جديد.');
-                    }
-
-                    // تحديث الكود لـ مستخدم وربطه بالطالب
-                    await supabase.from('access_codes').update({ is_used: true, used_by: user.value.id }).eq('code', inputCode);
-                    // إضافة المحاضرة للمحاضرات المفتوحة للطالب
-                    await supabase.from('student_lectures').insert({ student_id: user.value.id, lecture_id: lectureId });
-
-                    alert('مبروك! المحاضرة اتفتحت، بالتوفيق يا بطل 🚀');
-                    fetchUnlockedLectures();
-                };
-
-                const openLecture = (lec) => {
-                    currentLecture.value = lec;
-                    screen.value = 'view-lecture';
-                };
-
-                const getYoutubeId = (url) => {
-                    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-                    const match = url.match(regExp);
-                    return (match && match[2].length === 11) ? match[2] : null;
-                };
-
-                return {
-                    screen, isLogin, user, profile, selectedYear, selectedSubject, authForm, lectures, currentLecture,
-                    login, register, logout, getYearName, selectYear, selectSubject, isLecUnlocked, unlockLecture, openLecture, getYoutubeId
-                };
-            }
-        }).mount('#app');
-    </script>
+// ───── الإشعارات ─────
+async function vAnn() {
+  const d = (await run(sb.from('announcements').select('*').order('created_at', { ascending: false }))) || [];
+  main(`<h3>الإشعارات والإعلانات</h3><div class="bar"><button class="btn" onclick="annForm()">+ إشعار جديد</button><small style="color:var(--t2)">بتظهر لكل الطلبة فوراً داخل التطبيق</small></div><div class="tw"><table><thead><tr><th>العنوان</th><th>النص</th><th>التاريخ</th><th></th></tr></thead><tbody>` +
+    (d.map(a => `<tr><td>${esc(a.title)}</td><td>${esc(a.body)}</td><td>${new Date(a.created_at).toLocaleDateString('ar-EG')}</td><td><button class="btn sm er" onclick="annDel('${a.id}')">حذف</button></td></tr>`).join('') || '<tr><td colspan="4">لا توجد إشعارات</td></tr>') + `</tbody></table></div>`);
+}
+function annForm() {
+  openForm('إشعار جديد', [{ k: 'title', l: 'العنوان' }, { k: 'body', l: 'النص', t: 'textarea' }], {}, async o => {
+    if (!o.title.trim()) return toast('اكتب العنوان', true);
+    if (await run(sb.from('announcements').insert(o), 'تم إرسال الإشعار')) { closeM(); vAnn(); }
+  });
+}
+async function annDel(id) { if (confirm('حذف الإشعار؟') && await run(sb.from('announcements').delete().eq('id', id), 'تم الحذف')) vAnn(); }
+$('#pw').addEventListener('keydown', e => e.key === 'Enter' && login());
+</script>
 </body>
 </html>
